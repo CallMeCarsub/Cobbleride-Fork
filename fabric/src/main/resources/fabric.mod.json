@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "cobbleride",
+  "version": "0.1.0-SNAPSHOT",
+  "name": "Cobblemon: Ride On!",
+  "description": "Ride astride your Pokemon companions, as you travel by land, air or sea together!",
+  "authors": [
+    "StarliteHeart"
+  ],
+  "license": "MPL-2.0",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.starliteheart.cobbleride.mod.fabric.CobbleRideModFabric"
+    ]
+  },
+  "depends": {
+    "java": ">=17",
+    "minecraft": ">=1.21.1",
+    "fabricloader": ">=0.16.5",
+    "fabric": "*",
+    "cobblemon": ">=1.6.0"
+  }
+}
