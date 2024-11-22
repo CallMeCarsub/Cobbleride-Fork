@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "cobbleride",
-  "version": "0.1.0-SNAPSHOT",
+  "version": "${version}",
   "name": "Cobblemon: Ride On!",
   "description": "Ride astride your Pokemon companions, as you travel by land, air or sea together!",
   "authors": [
@@ -11,17 +11,17 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.starliteheart.cobbleride.mod.fabric.CobbleRideModFabric"
+      "net.starliteheart.cobbleride.fabric.CobbleRideModFabric"
     ]
   },
   "mixins": [
-    "mixins.cobbleride-common.json"
+    "cobbleride.mixins.json"
   ],
   "depends": {
-    "java": ">=17",
-    "minecraft": ">=1.21.1",
-    "fabricloader": ">=0.16.5",
-    "fabric": "*",
+    "java": ">=21",
+    "minecraft": "~1.21.1",
+    "fabricloader": ">=0.16.9",
+    "fabric-api": "*",
     "cobblemon": ">=1.6.0"
   }
 }

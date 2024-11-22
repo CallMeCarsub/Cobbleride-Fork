@@ -1,17 +1,17 @@
 modLoader = "javafml"
 loaderVersion = "[4,)"
-license = "MIT"
+license = "Mozilla Public License 2.0"
 
 [[mods]]
 modId = "cobbleride"
-version = "0.1.0-SNAPHOT"
+version = "${version}"
 displayName = "Cobblemon: Ride On!"
 description = '''
 Ride astride your Pokemon companions, as you travel by land, air or sea together!
 '''
 
 [[mixins]]
-config = "mixins.cobbleride-common.json"
+config = "cobbleride.mixins.json"
 
 [[dependencies.cobbleride]]
 modId = "minecraft"

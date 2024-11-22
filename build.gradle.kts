@@ -7,10 +7,10 @@ plugins {
     id("architectury-plugin") version("3.4-SNAPSHOT") apply false
 }
 
-group = "mod.starliteheart.cobbleride.mod"
-version = "0.1.0-SNAPSHOT"
-
 allprojects {
+    group = "${rootProject.properties["maven_group"]}"
+    version = "${rootProject.properties["mod_version"]}"
+
     apply(plugin = "java")
     apply(plugin = "org.jetbrains.kotlin.jvm")
 
@@ -22,6 +22,18 @@ allprojects {
 
     tasks.getByName<Test>("test") {
         useJUnitPlatform()
+    }
+}
+
+subprojects {
+    java {
+        // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+        // if it is present.
+        // If you remove this line, sources will not be generated.
+        withSourcesJar()
+
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }
 
