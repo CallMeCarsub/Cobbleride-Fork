@@ -16,7 +16,7 @@ import static net.minecraft.commands.Commands.literal;
 
 public final class CobbleRideMod {
     public static final String MOD_ID = "cobbleride";
-    public static final String VERSION = "0.1.0-SNAPSHOT";
+
     public static final Logger LOGGER = LogManager.getLogger();
 
     public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context, Commands.CommandSelection environment) {

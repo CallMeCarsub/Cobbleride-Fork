@@ -14,6 +14,9 @@
       "net.starliteheart.cobbleride.mod.fabric.CobbleRideModFabric"
     ]
   },
+  "mixins": [
+    "mixins.cobbleride-common.json"
+  ],
   "depends": {
     "java": ">=17",
     "minecraft": ">=1.21.1",

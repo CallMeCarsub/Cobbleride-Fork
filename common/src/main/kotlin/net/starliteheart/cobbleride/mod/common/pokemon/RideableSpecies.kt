@@ -1,0 +1,97 @@
+package net.starliteheart.cobbleride.mod.common.pokemon
+
+import com.cobblemon.mod.common.api.data.ClientDataSynchronizer
+import com.cobblemon.mod.common.api.data.ShowdownIdentifiable
+import com.cobblemon.mod.common.util.*
+import net.minecraft.network.RegistryFriendlyByteBuf
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.phys.Vec3
+import net.starliteheart.cobbleride.mod.common.CobbleRideMod
+import java.util.*
+
+class RideableSpecies : ClientDataSynchronizer<RideableSpecies>, ShowdownIdentifiable {
+    var name: String = "Bulbasaur"
+    var offsets: EnumMap<RiderOffsetType, Vec3> = EnumMap(RiderOffsetType::class.java)
+    var baseSpeedModifier: Float = 1.0F
+    var landSpeedModifier: Float = 1.0F
+    var waterSpeedModifier: Float = 1.0F
+    var airSpeedModifier: Float = 1.0F
+
+    val forms: MutableList<RideableFormData> = mutableListOf()
+
+    private val standardForm by lazy {
+        RideableFormData(
+            "Normal",
+            offsets,
+            baseSpeedModifier,
+            landSpeedModifier,
+            waterSpeedModifier,
+            airSpeedModifier
+        ).initialize(this)
+    }
+
+    @Transient
+    lateinit var identifier: ResourceLocation
+
+    fun initialize() {
+        this.forms.forEach { it.initialize(this) }
+        if (this.forms.isNotEmpty() && this.forms.none { it == this.standardForm }) {
+            this.forms.add(0, this.standardForm)
+        }
+    }
+
+    fun getForm(name: String): RideableFormData = forms.lastOrNull { it.name == name } ?: standardForm
+
+    override fun encode(buffer: RegistryFriendlyByteBuf) {
+        buffer.writeIdentifier(this.identifier)
+        buffer.writeString(this.name)
+        buffer.writeMap(this.offsets, { _, k -> buffer.writeEnumConstant(k) }, { _, v -> buffer.writeVec3(v) })
+        buffer.writeFloat(this.baseSpeedModifier)
+        buffer.writeFloat(this.landSpeedModifier)
+        buffer.writeFloat(this.waterSpeedModifier)
+        buffer.writeFloat(this.airSpeedModifier)
+        buffer.writeCollection(this.forms) { _, form -> form.encode(buffer) }
+    }
+
+    override fun decode(buffer: RegistryFriendlyByteBuf) {
+        this.identifier = buffer.readIdentifier()
+        this.name = buffer.readString()
+        this.offsets.clear()
+        this.offsets += buffer.readMap(
+            { _ -> buffer.readEnumConstant(RiderOffsetType::class.java) },
+            { _ -> buffer.readVec3() })
+        this.baseSpeedModifier = buffer.readFloat()
+        this.landSpeedModifier = buffer.readFloat()
+        this.waterSpeedModifier = buffer.readFloat()
+        this.airSpeedModifier = buffer.readFloat()
+        this.forms.clear()
+        this.forms += buffer.readList { RideableFormData().apply { decode(buffer) } }.filterNotNull().toMutableList()
+        this.initialize()
+    }
+
+    override fun shouldSynchronize(other: RideableSpecies): Boolean {
+        if (other.identifier.toString() != other.identifier.toString())
+            return false
+        return other.showdownId() != this.showdownId()
+                || other.name != this.name
+                || other.offsets != this.offsets
+                || other.baseSpeedModifier != this.baseSpeedModifier
+                || other.landSpeedModifier != this.landSpeedModifier
+                || other.waterSpeedModifier != this.waterSpeedModifier
+                || other.airSpeedModifier != this.airSpeedModifier
+                || other.forms != this.forms
+    }
+
+    override fun showdownId(): String {
+        val id = this.unformattedShowdownId()
+        if (this.identifier.namespace == CobbleRideMod.MOD_ID) {
+            return id
+        }
+        return this.identifier.namespace + id
+    }
+
+    private fun unformattedShowdownId(): String = Regex("[^a-z0-9]+").replace(this.name.lowercase(), "")
+
+    override fun toString() = this.showdownId()
+
+}

@@ -10,6 +10,9 @@ description = '''
 Ride astride your Pokemon companions, as you travel by land, air or sea together!
 '''
 
+[[mixins]]
+config = "mixins.cobbleride-common.json"
+
 [[dependencies.cobbleride]]
 modId = "minecraft"
 mandatory = true
