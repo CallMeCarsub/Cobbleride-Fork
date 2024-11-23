@@ -12,6 +12,8 @@
   ],
   "mixins": [
     "CobblemonNetworkMixin",
+    "DexAdditionsMixin",
+    "PokedexDefMixin",
     "PokemonMixin",
     "PokemonServerDelegateMixin"
   ],
