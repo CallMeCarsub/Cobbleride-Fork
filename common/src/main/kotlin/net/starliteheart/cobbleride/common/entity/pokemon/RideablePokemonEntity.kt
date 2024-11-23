@@ -1,5 +1,6 @@
 package net.starliteheart.cobbleride.common.entity.pokemon
 
+import com.bedrockk.molang.runtime.MoLangRuntime
 import com.cobblemon.mod.common.api.pokemon.status.Statuses
 import com.cobblemon.mod.common.api.reactive.SimpleObservable
 import com.cobblemon.mod.common.entity.PoseType
@@ -7,6 +8,7 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonBehaviourFlag
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
 import com.cobblemon.mod.common.pokemon.Pokemon
 import com.cobblemon.mod.common.util.getIsSubmerged
+import com.cobblemon.mod.common.util.resolveFloat
 import com.google.common.collect.UnmodifiableIterator
 import net.minecraft.core.BlockPos.MutableBlockPos
 import net.minecraft.core.Direction
@@ -32,7 +34,7 @@ import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.phys.Vec2
 import net.minecraft.world.phys.Vec3
 import net.starliteheart.cobbleride.common.api.pokemon.RideablePokemonSpecies
-import net.starliteheart.cobbleride.common.config.CommonServerConfig.SERVER.*
+import net.starliteheart.cobbleride.common.config.CobbleRideConfig.SERVER.*
 import net.starliteheart.cobbleride.common.net.messages.RideState
 import net.starliteheart.cobbleride.common.net.messages.client.pokemon.ai.ClientMoveBehaviour
 import net.starliteheart.cobbleride.common.net.messages.client.pokemon.update.RidePokemonStateUpdatePacket
@@ -408,14 +410,14 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         }
 
         // Get land, water, air speed modifiers based on behaviour settings and data
-        val mediumSpeed = (if (getCurrentPoseType() in setOf(PoseType.FLY, PoseType.HOVER)) {
+        val mediumSpeed = MoLangRuntime().resolveFloat(if (getCurrentPoseType() in setOf(PoseType.FLY, PoseType.HOVER)) {
                 moveBehaviour.fly.flySpeedHorizontal
             } else if (isEyeInFluid(FluidTags.WATER) || isEyeInFluid(FluidTags.LAVA)) {
                 moveBehaviour.swim.swimSpeed
             } else {
                 moveBehaviour.walk.walkSpeed
             }
-        ).getString().toFloat()
+        )
         val mediumModifier = if (getCurrentPoseType() in setOf(PoseType.FLY, PoseType.HOVER)) {
             (rideData?.airSpeedModifier ?: 1.0F) * globalAirSpeedModifier
         } else if (isInWater || isInLava) {

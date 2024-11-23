@@ -1,6 +1,6 @@
 package net.starliteheart.cobbleride.common.config;
 
-public class CommonServerConfig {
+public class CobbleRideConfig {
     public static class SERVER {
         public static double globalBaseSpeedModifier;
         public static double globalLandSpeedModifier;
@@ -9,7 +9,6 @@ public class CommonServerConfig {
         public static double waterVerticalClimbSpeed;
         public static double airVerticalClimbSpeed;
         public static double rideSpeedLimit;
-
         public static boolean isWaterBreathingShared;
         public static boolean canDismountInMidair;
 

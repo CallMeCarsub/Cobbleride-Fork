@@ -23,18 +23,18 @@ repositories {
 }
 
 dependencies {
-    minecraft("net.minecraft:minecraft:${rootProject.properties["minecraft_version"]}")
+    minecraft("net.minecraft:minecraft:${rootProject.property("minecraft_version")}")
     mappings(loom.officialMojangMappings())
-    neoForge("net.neoforged:neoforge:${rootProject.properties["neoforge_version"]}")
+    neoForge("net.neoforged:neoforge:${rootProject.property("neoforge_version")}")
 
     implementation(project(":common", configuration = "namedElements"))
     "developmentNeoForge"(project(":common", configuration = "namedElements")) {
         isTransitive = false
     }
 
-    modImplementation("com.cobblemon:neoforge:${rootProject.properties["cobblemon_version"]}")
+    modImplementation("com.cobblemon:neoforge:${rootProject.property("cobblemon_version")}")
     //Needed for cobblemon
-    implementation("thedarkcolour:kotlinforforge-neoforge:${rootProject.properties["kotlinforforge_version"]}") {
+    implementation("thedarkcolour:kotlinforforge-neoforge:${rootProject.property("kotlinforforge_version")}") {
         exclude("net.neoforged.fancymodloader", "loader")
     }
 
@@ -45,7 +45,7 @@ dependencies {
 tasks.processResources {
     inputs.property("version", project.version)
     filesMatching("META-INF/neoforge.mods.toml") {
-        expand(project.properties)
+        expand(inputs.properties)
     }
 }
 

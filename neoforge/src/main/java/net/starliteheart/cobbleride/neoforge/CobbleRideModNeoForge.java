@@ -8,14 +8,14 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityMountEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.starliteheart.cobbleride.common.CobbleRideMod;
-import net.starliteheart.cobbleride.common.config.CommonServerConfig;
+import net.starliteheart.cobbleride.common.config.CobbleRideConfig;
 import net.starliteheart.cobbleride.common.entity.pokemon.RideablePokemonEntity;
-import net.starliteheart.cobbleride.neoforge.config.NeoForgeServerConfig;
+import net.starliteheart.cobbleride.neoforge.config.ConfigNeoForge;
 
 @Mod(CobbleRideMod.MOD_ID)
 public class CobbleRideModNeoForge {
     public CobbleRideModNeoForge(ModContainer modContainer) {
-        modContainer.registerConfig(ModConfig.Type.SERVER, NeoForgeServerConfig.CONFIG_SPEC);
+        modContainer.registerConfig(ModConfig.Type.SERVER, ConfigNeoForge.CONFIG_SPEC);
         NeoForge.EVENT_BUS.addListener(this::handleMidairDismounts);
         NeoForge.EVENT_BUS.addListener(this::handleRidePlayerLogouts);
 
@@ -28,7 +28,7 @@ public class CobbleRideModNeoForge {
         if (!(event.getEntityBeingMounted() instanceof RideablePokemonEntity pokemon)) return;
 
         // All trainers are encouraged to buckle up when flying for their own safety!
-        if (!pokemon.onGround() && pokemon.isFlying() && !CommonServerConfig.SERVER.canDismountInMidair)
+        if (!pokemon.onGround() && pokemon.isFlying() && !CobbleRideConfig.SERVER.canDismountInMidair)
             event.setCanceled(true);
     }
 

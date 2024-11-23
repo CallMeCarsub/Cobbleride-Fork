@@ -1,5 +1,6 @@
 package net.starliteheart.cobbleride.neoforge.client;
 
+import kotlin.Unit;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -30,7 +31,7 @@ public class CobbleRideModNeoForgeClient {
     private void registerRideKeyBindings(RegisterKeyMappingsEvent event) {
         CobbleRideKeyBinds.INSTANCE.register(registrar -> {
             event.register(registrar);
-            return null;
+            return Unit.INSTANCE;
         });
     }
 

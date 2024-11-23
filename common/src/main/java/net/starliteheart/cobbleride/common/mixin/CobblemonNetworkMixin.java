@@ -19,9 +19,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
-@Mixin(CobblemonNetwork.class)
+@Mixin(value = CobblemonNetwork.class, remap = false)
 public abstract class CobblemonNetworkMixin {
-    @Inject(method = "generateS2CPacketInfoList", at = @At(value = "RETURN"), cancellable = true, remap = false)
+    @Inject(method = "generateS2CPacketInfoList", at = @At(value = "RETURN"), cancellable = true)
     public void addRideableS2CPacketHandlers(CallbackInfoReturnable<List<PacketRegisterInfo<?>>> cir) {
         List<PacketRegisterInfo<?>> list = cir.getReturnValue();
         list.add(new PacketRegisterInfo<>(SpawnRidePokemonPacket.Companion.getID(), SpawnRidePokemonPacket.Companion::decode, new SpawnExtraDataEntityHandler<>(), null));
@@ -30,7 +30,7 @@ public abstract class CobblemonNetworkMixin {
         cir.setReturnValue(list);
     }
 
-    @Inject(method = "generateC2SPacketInfoList", at = @At(value = "RETURN"), cancellable = true, remap = false)
+    @Inject(method = "generateC2SPacketInfoList", at = @At(value = "RETURN"), cancellable = true)
     public void addRideableC2SPacketHandlers(CallbackInfoReturnable<List<PacketRegisterInfo<?>>> cir) {
         List<PacketRegisterInfo<?>> list = cir.getReturnValue();
         list.add(new PacketRegisterInfo<>(SetRidePokemonStatePacket.Companion.getID(), SetRidePokemonStatePacket.Companion::decode, new SetRidePokemonStateHandler(), null));

@@ -18,25 +18,25 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static net.starliteheart.cobbleride.common.client.CobbleRideClientUtilsKt.blitRideIcon;
 import static net.starliteheart.cobbleride.common.util.CobbleRideUtilsKt.rideableResource;
 
-@Mixin(Summary.class)
+@Mixin(value = Summary.class, remap = false)
 public abstract class SummaryMixin extends Screen {
     protected SummaryMixin(Component arg) {
         super(arg);
     }
 
-    @Shadow(remap = false)
+    @Shadow
     public Pokemon selectedPokemon;
 
     @Final
-    @Shadow(remap = false)
+    @Shadow
     public static int BASE_WIDTH;
 
     @Final
-    @Shadow(remap = false)
+    @Shadow
     public static int BASE_HEIGHT;
 
     @Final
-    @Shadow(remap = false)
+    @Shadow
     private static float SCALE;
 
     @Inject(

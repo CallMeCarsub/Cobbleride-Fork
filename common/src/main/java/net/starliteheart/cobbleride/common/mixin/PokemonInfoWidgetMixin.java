@@ -18,15 +18,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static net.starliteheart.cobbleride.common.client.CobbleRideClientUtilsKt.blitRideIcon;
 import static net.starliteheart.cobbleride.common.util.CobbleRideUtilsKt.rideableResource;
 
-@Mixin(PokemonInfoWidget.class)
+@Mixin(value = PokemonInfoWidget.class, remap = false)
 public abstract class PokemonInfoWidgetMixin {
-    @Shadow(remap = false)
+    @Shadow
     public abstract PokedexEntry getCurrentEntry();
 
-    @Shadow(remap = false)
+    @Shadow
     public abstract int getPY();
 
-    @Shadow(remap = false)
+    @Shadow
     public abstract int getPX();
 
     @Inject(

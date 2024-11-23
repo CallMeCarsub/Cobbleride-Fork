@@ -13,12 +13,12 @@ import net.starliteheart.cobbleride.common.net.messages.client.spawn.SpawnRidePo
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(SpawnRidePokemonPacket.class)
+@Mixin(value = SpawnRidePokemonPacket.class, remap = false)
 public abstract class SpawnRidePokemonPacketMixin extends SpawnExtraDataEntityPacketMixin {
     @Shadow
     public abstract boolean checkType(Entity entity);
 
-    @Shadow(remap = false)
+    @Shadow
     public abstract void applyData(RideablePokemonEntity entity);
 
     @Override

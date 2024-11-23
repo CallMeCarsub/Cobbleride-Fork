@@ -8,8 +8,8 @@ plugins {
 }
 
 allprojects {
-    group = "${rootProject.properties["maven_group"]}"
-    version = "${rootProject.properties["mod_version"]}"
+    group = "${rootProject.property("group")}"
+    version = "${rootProject.property("mod_version")}"
 
     apply(plugin = "java")
     apply(plugin = "org.jetbrains.kotlin.jvm")
@@ -25,15 +25,15 @@ allprojects {
     }
 }
 
-subprojects {
-    java {
-        // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-        // if it is present.
-        // If you remove this line, sources will not be generated.
-        withSourcesJar()
-
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-}
+//subprojects {
+//    java {
+//        // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+//        // if it is present.
+//        // If you remove this line, sources will not be generated.
+//        withSourcesJar()
+//
+//        sourceCompatibility = JavaVersion.VERSION_21
+//        targetCompatibility = JavaVersion.VERSION_21
+//    }
+//}
 

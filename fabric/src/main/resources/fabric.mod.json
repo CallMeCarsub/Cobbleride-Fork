@@ -12,10 +12,14 @@
   "entrypoints": {
     "main": [
       "net.starliteheart.cobbleride.fabric.CobbleRideModFabric"
+    ],
+    "client": [
+      "net.starliteheart.cobbleride.fabric.client.CobbleRideModFabricClient"
     ]
   },
   "mixins": [
-    "cobbleride.mixins.json"
+    "cobbleride.mixins.json",
+    "fabric.cobbleride.mixins.json"
   ],
   "depends": {
     "java": ">=21",

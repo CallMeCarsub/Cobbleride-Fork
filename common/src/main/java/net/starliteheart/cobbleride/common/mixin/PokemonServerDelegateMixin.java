@@ -12,9 +12,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(PokemonServerDelegate.class)
+@Mixin(value = PokemonServerDelegate.class, remap = false)
 public abstract class PokemonServerDelegateMixin<T> {
-    @Shadow(remap = false)
+    @Shadow
     public PokemonEntity entity;
 
     @SuppressWarnings("unchecked")

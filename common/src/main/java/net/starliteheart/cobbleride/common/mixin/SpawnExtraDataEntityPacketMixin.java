@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(SpawnExtraDataEntityPacket.class)
+@Mixin(value = SpawnExtraDataEntityPacket.class, remap = false)
 public abstract class SpawnExtraDataEntityPacketMixin {
     @Final
     @Shadow
