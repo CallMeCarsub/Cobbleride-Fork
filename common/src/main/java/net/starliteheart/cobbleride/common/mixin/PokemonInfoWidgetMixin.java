@@ -40,7 +40,7 @@ public abstract class PokemonInfoWidgetMixin {
         PoseStack matrices = context.pose();
         float scale = PokedexGUIConstants.SCALE;
 
-        Species species = PokemonSpecies.INSTANCE.getByIdentifier(getCurrentEntry().getId());
+        Species species = PokemonSpecies.INSTANCE.getByIdentifier(getCurrentEntry().getSpeciesId());
         if (species != null) {
             RideableSpecies rideableSpecies = RideablePokemonSpecies.INSTANCE.getByName(species.showdownId());
             if (rideableSpecies != null) blitRideIcon(

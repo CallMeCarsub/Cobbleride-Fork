@@ -4,36 +4,33 @@ plugins {
     kotlin("jvm") version("1.9.23")
 
     id("dev.architectury.loom") version("1.7-SNAPSHOT") apply false
-    id("architectury-plugin") version("3.4-SNAPSHOT") apply false
+    id("architectury-plugin") version("3.4-SNAPSHOT")
+    id("com.github.johnrengelman.shadow") version("8.1.1") apply false
+}
+
+architectury {
+    minecraft = "${project.property("minecraft_version")}"
 }
 
 allprojects {
-    group = "${rootProject.property("group")}"
+    group = "${rootProject.property("maven_group")}"
     version = "${rootProject.property("mod_version")}"
+}
 
+subprojects {
     apply(plugin = "java")
     apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "dev.architectury.loom")
+    apply(plugin = "architectury-plugin")
+
+    base {
+        // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.
+        archivesName = "${rootProject.property("archives_name")}-${project.name}"
+    }
 
     repositories {
         mavenCentral()
         maven(url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
         maven("https://maven.impactdev.net/repository/development/")
     }
-
-    tasks.getByName<Test>("test") {
-        useJUnitPlatform()
-    }
 }
-
-//subprojects {
-//    java {
-//        // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-//        // if it is present.
-//        // If you remove this line, sources will not be generated.
-//        withSourcesJar()
-//
-//        sourceCompatibility = JavaVersion.VERSION_21
-//        targetCompatibility = JavaVersion.VERSION_21
-//    }
-//}
-

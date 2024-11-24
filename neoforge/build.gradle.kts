@@ -1,6 +1,5 @@
 plugins {
-    id("dev.architectury.loom")
-    id("architectury-plugin")
+    id("com.github.johnrengelman.shadow")
 }
 
 architectury {
@@ -13,10 +12,9 @@ loom {
     silentMojangMappingsLicense()
 }
 
+val shadowBundle = configurations.create("shadowBundle")
+
 repositories {
-    mavenCentral()
-    maven("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
-    maven("https://maven.impactdev.net/repository/development/")
     maven("https://hub.spigotmc.org/nexus/content/groups/public/")
     maven("https://thedarkcolour.github.io/KotlinForForge/")
     maven("https://maven.neoforged.net")
@@ -27,10 +25,10 @@ dependencies {
     mappings(loom.officialMojangMappings())
     neoForge("net.neoforged:neoforge:${rootProject.property("neoforge_version")}")
 
-    implementation(project(":common", configuration = "namedElements"))
-    "developmentNeoForge"(project(":common", configuration = "namedElements")) {
+    implementation(project(":common", configuration = "namedElements")) {
         isTransitive = false
     }
+    shadowBundle(project(":common", configuration = "transformProductionNeoForge"))
 
     modImplementation("com.cobblemon:neoforge:${rootProject.property("cobblemon_version")}")
     //Needed for cobblemon
@@ -42,13 +40,21 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
 }
 
-tasks.processResources {
-    inputs.property("version", project.version)
-    filesMatching("META-INF/neoforge.mods.toml") {
-        expand(inputs.properties)
+tasks {
+    processResources {
+        inputs.property("version", project.version)
+        filesMatching("META-INF/neoforge.mods.toml") {
+            expand("version" to project.version)
+        }
     }
-}
 
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
+    shadowJar {
+        archiveClassifier.set("dev-shadow")
+        configurations = listOf(shadowBundle)
+    }
+
+    remapJar {
+        dependsOn(shadowJar)
+        inputFile.set(shadowJar.flatMap { it.archiveFile })
+    }
 }

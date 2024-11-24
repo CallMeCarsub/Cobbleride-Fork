@@ -1,8 +1,3 @@
-plugins {
-    id("dev.architectury.loom")
-    id("architectury-plugin")
-}
-
 architectury {
     common("neoforge", "fabric")
 }
@@ -19,13 +14,9 @@ dependencies {
     // We depend on Fabric Loader here to use the Fabric @Environment annotations,
     // which get remapped to the correct annotations on each platform.
     // Do NOT use other classes from Fabric Loader.
-    modCompileOnly("net.fabricmc:fabric-loader:${rootProject.property("fabric_loader_version")}")
+    modImplementation("net.fabricmc:fabric-loader:${rootProject.property("fabric_loader_version")}")
     modCompileOnlyApi("local.com.bedrockk:molang:1.1.15")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
-}
-
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
 }
