@@ -56,5 +56,10 @@
   "cobbleride.configuration.sprinting.rideSprintRecoveryDelay": "Recovery Delay",
   "cobbleride.configuration.sprinting.rideSprintRecoveryDelay.tooltip": "Number of ticks that must pass before stamina begins to recover.",
   "cobbleride.configuration.sprinting.rideSprintExhaustionSpeed": "Exhausted Speed Modifier",
-  "cobbleride.configuration.sprinting.rideSprintExhaustionSpeed.tooltip": "Speed multiplier for exhausted Ride Pokemon."
+  "cobbleride.configuration.sprinting.rideSprintExhaustionSpeed.tooltip": "Speed multiplier for exhausted Ride Pokemon.",
+  "cobblemon.ui.pokedex.region.rideable": "Rideable",
+  "key.cobbleride.categories.cobbleride": "Cobblemon: Ride On!",
+  "key.cobbleride.ascend": "Ascend / Fly",
+  "key.cobbleride.descend": "Descend / Dive",
+  "key.cobbleride.sprint": "Sprint"
 }

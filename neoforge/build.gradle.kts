@@ -25,7 +25,8 @@ dependencies {
     mappings(loom.officialMojangMappings())
     neoForge("net.neoforged:neoforge:${rootProject.property("neoforge_version")}")
 
-    implementation(project(":common", configuration = "namedElements")) {
+    implementation(project(":common", configuration = "namedElements"))
+    "developmentNeoForge"(project(":common", configuration = "namedElements")) {
         isTransitive = false
     }
     shadowBundle(project(":common", configuration = "transformProductionNeoForge"))

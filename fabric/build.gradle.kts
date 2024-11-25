@@ -28,9 +28,8 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.property("fabric_api_version")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${rootProject.property("fabric_lang_kotl_version")}")
 
-    implementation(project(":common", configuration = "namedElements")) {
-        isTransitive = false
-    }
+    implementation(project(":common", configuration = "namedElements"))
+    "developmentFabric"(project(":common", configuration = "namedElements"))
     shadowBundle(project(":common", configuration = "transformProductionFabric"))
 
     modImplementation("com.cobblemon:fabric:${rootProject.property("cobblemon_version")}")

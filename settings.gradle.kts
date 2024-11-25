@@ -1,4 +1,4 @@
-rootProject.name = "CobbleRide"
+rootProject.name = "cobbleride"
 
 pluginManagement {
     repositories {
