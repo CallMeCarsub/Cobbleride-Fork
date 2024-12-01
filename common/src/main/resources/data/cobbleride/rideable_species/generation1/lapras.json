@@ -8,7 +8,7 @@
     }
   },
   "baseSpeedModifier": 1.0,
-  "landSpeedModifier": 0.25,
+  "landSpeedModifier": 0.5,
   "waterSpeedModifier": 1.0,
   "airSpeedModifier": 1.0,
   "forms": []

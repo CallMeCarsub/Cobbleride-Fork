@@ -9,7 +9,7 @@ plugins {
 }
 
 architectury {
-    minecraft = "${project.property("minecraft_version")}"
+    minecraft = "${rootProject.property("minecraft_version")}"
 }
 
 allprojects {

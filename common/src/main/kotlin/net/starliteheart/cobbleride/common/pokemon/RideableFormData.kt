@@ -14,6 +14,7 @@ import java.util.*
 class RideableFormData(
     var name: String = "Normal",
     var offsets: EnumMap<RiderOffsetType, Vec3> = EnumMap(RiderOffsetType::class.java),
+    var shouldRiderSit: Boolean = true,
     var baseSpeedModifier: Float = 1.0F,
     var landSpeedModifier: Float = 1.0F,
     var waterSpeedModifier: Float = 1.0F,
@@ -34,6 +35,7 @@ class RideableFormData(
     override fun encode(buffer: RegistryFriendlyByteBuf) {
         buffer.writeString(this.name)
         buffer.writeMap(this.offsets, { _, k -> buffer.writeEnumConstant(k) }, { _, v -> buffer.writeVec3(v) })
+        buffer.writeBoolean(this.shouldRiderSit)
         buffer.writeFloat(this.baseSpeedModifier)
         buffer.writeFloat(this.landSpeedModifier)
         buffer.writeFloat(this.waterSpeedModifier)
@@ -46,6 +48,7 @@ class RideableFormData(
         this.offsets += buffer.readMap(
             { _ -> buffer.readEnumConstant(RiderOffsetType::class.java) },
             { _ -> buffer.readVec3() })
+        this.shouldRiderSit = buffer.readBoolean()
         this.baseSpeedModifier = buffer.readFloat()
         this.landSpeedModifier = buffer.readFloat()
         this.waterSpeedModifier = buffer.readFloat()

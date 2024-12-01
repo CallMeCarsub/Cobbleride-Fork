@@ -259,6 +259,8 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         return super.mobInteract(player, hand)
     }
 
+    fun shouldRiderSit(): Boolean = rideData != null && rideData!!.shouldRiderSit
+
     override fun tickRidden(player: Player, vec3: Vec3) {
         super.tickRidden(player, vec3)
         val vec2 = this.getRiddenRotation(player)
@@ -269,6 +271,12 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         this.yBodyRot = averageOfTwoRots(this.yHeadRot, this.yRotO)
         this.yRotO = averageOfTwoRots(this.yBodyRot, this.yRotO)
 
+        if (!shouldRiderSit()) {
+            player.yBodyRot = this.yBodyRot
+            player.yRotO = this.yRotO
+            player.calculateEntityAnimation(false)
+        }
+
         // Carry over logic from PokemonMoveControl, where non-diving Pokemon that can swim will tread water
         if ((this.isInLava && !moveBehaviour.swim.canBreatheUnderlava) ||
             (moveBehaviour.swim.canSwimInWater && !moveBehaviour.swim.canBreatheUnderwater
@@ -277,7 +285,8 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
             ) > this.fluidJumpThreshold)
         ) {
             if (this.random.nextFloat() < 0.8f) {
-                this.jumpControl.jump()
+                jumpInLiquid(if (isInWater) FluidTags.WATER else FluidTags.LAVA)
+//                this.jumpControl.jump()
             }
         }
 
@@ -300,7 +309,8 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
                 // Because being able to stand on water means being affected by normal "ground" gravity,
                 //   We need to make sure we aren't TRYING to stand on it before we're fully out
                 shouldSinkInWater = true
-                this.jumpControl.jump()
+//                this.jumpControl.jump()
+                jumpInLiquid(FluidTags.WATER)
             } else if (moveBehaviour.fly.canFly && !this.isFlying() && !getIsSubmerged()) {
                 this.setBehaviourFlag(PokemonBehaviourFlag.FLYING, true)
             } else {
@@ -314,9 +324,11 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         ) {
             sprintCooldownScale = 0F
             if (sprintStaminaScale > 0) {
-                this.isSprinting = true
-                // This may not be the best way to get an FOV change, but this will suffice until the first bugs inevitably happen
-                player.isSprinting = true
+                if (!level().isClientSide) {
+                    this.isSprinting = true
+                    // This may not be the best way to get an FOV change, but this will suffice until the first bugs inevitably happen
+                    player.isSprinting = true
+                }
                 if (canExhaust) {
                     sprintStaminaScale = max(sprintStaminaScale - (1F / rideSprintMaxStamina), 0F)
                 }
@@ -324,13 +336,15 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
                 isExhausted = true
             }
         } else {
-            this.isSprinting = false
-            // Be sure to remove FOV change here
-            player.isSprinting = false
+            if (!level().isClientSide) {
+                this.isSprinting = false
+                // Be sure to remove FOV change here
+                player.isSprinting = false
+            }
         }
 
         // Activate any jumps that have been queued up this tick
-        this.jumpControl.tick()
+//        this.jumpControl.tick()
     }
 
     override fun tick() {

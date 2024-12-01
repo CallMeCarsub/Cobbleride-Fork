@@ -12,6 +12,7 @@ import java.util.*
 class RideableSpecies : ClientDataSynchronizer<RideableSpecies>, ShowdownIdentifiable {
     var name: String = "Bulbasaur"
     var offsets: EnumMap<RiderOffsetType, Vec3> = EnumMap(RiderOffsetType::class.java)
+    var shouldRiderSit: Boolean = true
     var baseSpeedModifier: Float = 1.0F
     var landSpeedModifier: Float = 1.0F
     var waterSpeedModifier: Float = 1.0F
@@ -23,6 +24,7 @@ class RideableSpecies : ClientDataSynchronizer<RideableSpecies>, ShowdownIdentif
         RideableFormData(
             "Normal",
             offsets,
+            shouldRiderSit,
             baseSpeedModifier,
             landSpeedModifier,
             waterSpeedModifier,
@@ -46,6 +48,7 @@ class RideableSpecies : ClientDataSynchronizer<RideableSpecies>, ShowdownIdentif
         buffer.writeIdentifier(this.identifier)
         buffer.writeString(this.name)
         buffer.writeMap(this.offsets, { _, k -> buffer.writeEnumConstant(k) }, { _, v -> buffer.writeVec3(v) })
+        buffer.writeBoolean(this.shouldRiderSit)
         buffer.writeFloat(this.baseSpeedModifier)
         buffer.writeFloat(this.landSpeedModifier)
         buffer.writeFloat(this.waterSpeedModifier)
@@ -60,6 +63,7 @@ class RideableSpecies : ClientDataSynchronizer<RideableSpecies>, ShowdownIdentif
         this.offsets += buffer.readMap(
             { _ -> buffer.readEnumConstant(RiderOffsetType::class.java) },
             { _ -> buffer.readVec3() })
+        this.shouldRiderSit = buffer.readBoolean()
         this.baseSpeedModifier = buffer.readFloat()
         this.landSpeedModifier = buffer.readFloat()
         this.waterSpeedModifier = buffer.readFloat()
@@ -75,6 +79,7 @@ class RideableSpecies : ClientDataSynchronizer<RideableSpecies>, ShowdownIdentif
         return other.showdownId() != this.showdownId()
                 || other.name != this.name
                 || other.offsets != this.offsets
+                || other.shouldRiderSit != this.shouldRiderSit
                 || other.baseSpeedModifier != this.baseSpeedModifier
                 || other.landSpeedModifier != this.landSpeedModifier
                 || other.waterSpeedModifier != this.waterSpeedModifier

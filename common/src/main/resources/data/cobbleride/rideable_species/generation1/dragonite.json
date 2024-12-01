@@ -33,7 +33,7 @@
     }
   },
   "baseSpeedModifier": 1.0,
-  "landSpeedModifier": 1.0,
+  "landSpeedModifier": 0.25,
   "waterSpeedModifier": 0.5,
   "airSpeedModifier": 1.0,
   "forms": []
