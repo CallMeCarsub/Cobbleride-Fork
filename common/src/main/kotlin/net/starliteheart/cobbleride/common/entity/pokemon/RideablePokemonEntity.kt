@@ -7,6 +7,7 @@ import com.cobblemon.mod.common.entity.PoseType
 import com.cobblemon.mod.common.entity.pokemon.PokemonBehaviourFlag
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
 import com.cobblemon.mod.common.pokemon.Pokemon
+import com.cobblemon.mod.common.util.DataKeys
 import com.cobblemon.mod.common.util.getIsSubmerged
 import com.cobblemon.mod.common.util.resolveFloat
 import com.google.common.collect.UnmodifiableIterator
@@ -94,7 +95,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         rideData != null && (canBeControlledBy(player) || !this.isBattling)
 
     override fun isImmobile(): Boolean =
-        this.pokemon.status?.status == Statuses.SLEEP || super.isImmobile()
+        pokemon.status?.status == Statuses.SLEEP || super.isImmobile()
 
     override fun canSitOnShoulder(): Boolean =
         passengers.isEmpty() && super.canSitOnShoulder()
@@ -137,6 +138,10 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
             offsets[SWIMMING]?.let { offset = offset.add(it) }
         } else if (isInPoseOfType(PoseType.WALK) && hasOffset(WALKING)) {
             offsets[WALKING]?.let { offset = offset.add(it) }
+        }
+
+        if (aspects.any { it.contains(DataKeys.HAS_BEEN_SHEARED) } && hasOffset(SHEARED)) {
+            offsets[SHEARED]?.let { offset = offset.add(it) }
         }
 
         var attachmentPoint = super.getPassengerAttachmentPoint(entity, dimensions, f)
@@ -285,8 +290,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
             ) > this.fluidJumpThreshold)
         ) {
             if (this.random.nextFloat() < 0.8f) {
-                jumpInLiquid(if (isInWater) FluidTags.WATER else FluidTags.LAVA)
-//                this.jumpControl.jump()
+                this.jumpControl.jump()
             }
         }
 
@@ -309,8 +313,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
                 // Because being able to stand on water means being affected by normal "ground" gravity,
                 //   We need to make sure we aren't TRYING to stand on it before we're fully out
                 shouldSinkInWater = true
-//                this.jumpControl.jump()
-                jumpInLiquid(FluidTags.WATER)
+                this.jumpControl.jump()
             } else if (moveBehaviour.fly.canFly && !this.isFlying() && !getIsSubmerged()) {
                 this.setBehaviourFlag(PokemonBehaviourFlag.FLYING, true)
             } else {
@@ -344,7 +347,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         }
 
         // Activate any jumps that have been queued up this tick
-//        this.jumpControl.tick()
+        this.jumpControl.tick()
     }
 
     override fun tick() {
@@ -437,7 +440,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         } else if (isInWater || isInLava) {
             // Adds a little speed to submerged Pokemon for better ride feel
             (rideData?.waterSpeedModifier ?: 1.0F) * globalWaterSpeedModifier * if (getIsSubmerged()) {
-                1.5F
+                2.0F
             } else {
                 1.0F
             }

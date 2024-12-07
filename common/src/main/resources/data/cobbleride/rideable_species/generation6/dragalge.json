@@ -1,19 +1,14 @@
 {
-  "name": "Greninja",
+  "name": "Dragalge",
   "offsets": {
     "DEFAULT": {
       "x": 0,
-      "y": -1,
-      "z": -0.4
-    },
-    "DIVING": {
-      "x": 0,
-      "y": -0.5,
-      "z": 0
+      "y": -0.8,
+      "z": -0.3
     }
   },
   "baseSpeedModifier": 1.0,
-  "landSpeedModifier": 0.25,
+  "landSpeedModifier": 0.5,
   "waterSpeedModifier": 1.0,
   "airSpeedModifier": 1.0,
   "forms": []

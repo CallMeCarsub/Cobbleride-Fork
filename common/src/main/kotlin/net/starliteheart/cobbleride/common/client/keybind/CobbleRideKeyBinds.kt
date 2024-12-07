@@ -6,7 +6,6 @@ import net.minecraft.client.KeyMapping
 import net.starliteheart.cobbleride.common.client.keybind.keybinds.AscendBinding
 import net.starliteheart.cobbleride.common.client.keybind.keybinds.DescendBinding
 import net.starliteheart.cobbleride.common.client.keybind.keybinds.SprintBinding
-import java.util.function.Consumer
 
 object CobbleRideKeyBinds {
     private val keyBinds = arrayListOf<CobblemonKeyBinding>()

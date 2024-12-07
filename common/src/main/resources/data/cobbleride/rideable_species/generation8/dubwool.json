@@ -1,18 +1,18 @@
 {
-  "name": "Incineroar",
+  "name": "Dubwool",
   "offsets": {
     "DEFAULT": {
       "x": 0,
-      "y": -0.8,
-      "z": -0.5
+      "y": -0.1,
+      "z": -0.3
     },
-    "WALKING": {
+    "SHEARED": {
       "x": 0,
-      "y": 0,
-      "z": 0.1
+      "y": -0.3,
+      "z": 0
     }
   },
-  "baseSpeedModifier": 0.5,
+  "baseSpeedModifier": 0.25,
   "landSpeedModifier": 1.0,
   "waterSpeedModifier": 0.5,
   "airSpeedModifier": 1.0,

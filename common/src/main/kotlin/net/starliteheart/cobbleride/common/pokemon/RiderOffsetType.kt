@@ -8,7 +8,8 @@ enum class RiderOffsetType {
     DIVING,
     SUSPENDED,
     FLYING,
-    HOVERING
+    HOVERING,
+    SHEARED
 }
 
 inline fun <reified T : Enum<T>> printAllValues() {

@@ -1,15 +1,10 @@
 {
-  "name": "Incineroar",
+  "name": "Sneasler",
   "offsets": {
     "DEFAULT": {
       "x": 0,
-      "y": -0.8,
-      "z": -0.5
-    },
-    "WALKING": {
-      "x": 0,
-      "y": 0,
-      "z": 0.1
+      "y": -0.7,
+      "z": -0.4
     }
   },
   "baseSpeedModifier": 0.5,

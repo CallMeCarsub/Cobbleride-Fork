@@ -8,7 +8,7 @@
     }
   },
   "baseSpeedModifier": 1.0,
-  "landSpeedModifier": 1.0,
+  "landSpeedModifier": 0.8,
   "waterSpeedModifier": 1.0,
   "airSpeedModifier": 1.0,
   "forms": [
@@ -22,7 +22,7 @@
         }
       },
       "baseSpeedModifier": 1.0,
-      "landSpeedModifier": 1.0,
+      "landSpeedModifier": 0.8,
       "waterSpeedModifier": 1.0,
       "airSpeedModifier": 1.0
     }

@@ -1,19 +1,19 @@
 {
-  "name": "Incineroar",
+  "name": "Kilowattrel",
   "offsets": {
     "DEFAULT": {
       "x": 0,
-      "y": -0.8,
-      "z": -0.5
+      "y": -0.9,
+      "z": -0.3
     },
-    "WALKING": {
+    "FLYING": {
       "x": 0,
       "y": 0,
-      "z": 0.1
+      "z": 0.3
     }
   },
-  "baseSpeedModifier": 0.5,
-  "landSpeedModifier": 1.0,
+  "baseSpeedModifier": 1.0,
+  "landSpeedModifier": 0.5,
   "waterSpeedModifier": 0.5,
   "airSpeedModifier": 1.0,
   "forms": []
