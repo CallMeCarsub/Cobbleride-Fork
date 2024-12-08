@@ -25,7 +25,7 @@ object CobbleRideMod {
     private fun loadConfig() {
         val configFileLoc =
             System.getProperty("user.dir") + File.separator + "config" + File.separator + MOD_ID + File.separator + "config.json"
-        println("Loading config file found at: $configFileLoc")
+        LOGGER.info("Loading config file found at: $configFileLoc")
         val configFile = File(configFileLoc)
         configFile.parentFile.mkdirs()
 
@@ -63,7 +63,7 @@ object CobbleRideMod {
 
                 fileReader.close()
             } catch (e: Exception) {
-                System.err.println("[CobbleRide] Failed to load the config! Using default config as fallback")
+                LOGGER.error("Failed to load the config! Using default config as fallback.")
                 e.printStackTrace()
                 config = CobbleRideConfig()
             }
@@ -91,7 +91,7 @@ object CobbleRideMod {
             }
         }
         if (merged) {
-            LOGGER.info("Successfully merged config.")
+            LOGGER.info("Successfully merged config!")
         }
         return fileConfig
     }
@@ -100,14 +100,14 @@ object CobbleRideMod {
         try {
             val configFileLoc =
                 System.getProperty("user.dir") + File.separator + "config" + File.separator + MOD_ID + File.separator + "config.json"
-            println("Saving config to: $configFileLoc")
+            LOGGER.info("Saving config to: $configFileLoc")
             val configFile = File(configFileLoc)
             val fileWriter = FileWriter(configFile)
             CobbleRideConfig.GSON.toJson(config, fileWriter)
             fileWriter.flush()
             fileWriter.close()
         } catch (e: java.lang.Exception) {
-            System.err.println("[CobbleRide] Failed to save config")
+            LOGGER.error("Failed to save config!")
             e.printStackTrace()
         }
     }

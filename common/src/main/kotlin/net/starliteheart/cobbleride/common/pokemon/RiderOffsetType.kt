@@ -11,7 +11,3 @@ enum class RiderOffsetType {
     HOVERING,
     SHEARED
 }
-
-inline fun <reified T : Enum<T>> printAllValues() {
-    println(enumValues<T>().joinToString { it.name })
-}

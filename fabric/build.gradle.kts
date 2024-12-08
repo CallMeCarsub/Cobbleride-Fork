@@ -14,12 +14,6 @@ loom {
 
 val shadowBundle = configurations.create("shadowBundle")
 
-repositories {
-    maven("https://maven.shedaniel.me/")
-    maven("https://maven.terraformersmc.com/releases/")
-    maven("https://maven.wispforest.io/releases/")
-}
-
 dependencies {
     minecraft("net.minecraft:minecraft:${rootProject.property("minecraft_version")}")
     mappings(loom.officialMojangMappings())
@@ -29,12 +23,12 @@ dependencies {
     modImplementation("net.fabricmc:fabric-language-kotlin:${rootProject.property("fabric_lang_kotl_version")}")
 
     implementation(project(":common", configuration = "namedElements"))
-    "developmentFabric"(project(":common", configuration = "namedElements"))
+    "developmentFabric"(project(":common", configuration = "namedElements")) {
+        isTransitive = false
+    }
     shadowBundle(project(":common", configuration = "transformProductionFabric"))
 
     modImplementation("com.cobblemon:fabric:${rootProject.property("cobblemon_version")}")
-    modImplementation("io.wispforest:owo-lib:0.12.15+1.21")
-    annotationProcessor("io.wispforest:owo-lib:0.12.15+1.21")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
