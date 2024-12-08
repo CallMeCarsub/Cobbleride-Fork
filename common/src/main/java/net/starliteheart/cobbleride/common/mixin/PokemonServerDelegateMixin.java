@@ -19,10 +19,10 @@ public abstract class PokemonServerDelegateMixin<T> {
 
     @SuppressWarnings("unchecked")
     @Redirect(
-        method = "updateTrackedValues", at = @At(
+            method = "updateTrackedValues", at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/network/syncher/SynchedEntityData;set(Lnet/minecraft/network/syncher/EntityDataAccessor;Ljava/lang/Object;)V"
-        )
+    )
     )
     public void setIfRideableIsMoving(SynchedEntityData instance, EntityDataAccessor<T> arg, T object) {
         if (arg.equals(PokemonEntity.Companion.getMOVING()) && entity instanceof RideablePokemonEntity rideable && rideable.getControllingPassenger() != null && rideable.getControllingPassenger() instanceof Player player) {

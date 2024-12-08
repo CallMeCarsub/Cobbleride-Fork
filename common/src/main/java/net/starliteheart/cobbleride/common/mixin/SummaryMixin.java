@@ -40,10 +40,10 @@ public abstract class SummaryMixin extends Screen {
     private static float SCALE;
 
     @Inject(
-        method = "render", at = @At(
+            method = "render", at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/gui/screens/Screen;render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"
-        )
+    )
     )
     public void displayRideIcon(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         int x = (width - BASE_WIDTH) / 2;

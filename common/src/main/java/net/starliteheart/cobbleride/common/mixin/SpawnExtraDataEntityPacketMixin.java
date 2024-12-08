@@ -22,8 +22,8 @@ public abstract class SpawnExtraDataEntityPacketMixin {
     }
 
     @Redirect(
-        method = "spawnAndApply",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;execute(Ljava/lang/Runnable;)V")
+            method = "spawnAndApply",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;execute(Ljava/lang/Runnable;)V")
     )
     public void replaceEntityDefinition(Minecraft client, Runnable runnable) {
         client.execute(runnable);

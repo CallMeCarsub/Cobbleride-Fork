@@ -30,11 +30,11 @@ public abstract class PokemonInfoWidgetMixin {
     public abstract int getPX();
 
     @Inject(
-        method = "renderWidget", at = @At(
+            method = "renderWidget", at = @At(
             value = "INVOKE",
             target = "Lcom/cobblemon/mod/common/client/gui/pokedex/ScaledButton;render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V",
             ordinal = 6, shift = At.Shift.AFTER
-        )
+    )
     )
     public void displayRideDexIcon(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         PoseStack matrices = context.pose();

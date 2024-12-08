@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(value = Pokemon.class, remap = false)
 public abstract class PokemonMixin {
     @Redirect(
-        method = "sendOut",
-        at = @At(value = "NEW", target = "com/cobblemon/mod/common/entity/pokemon/PokemonEntity")
+            method = "sendOut",
+            at = @At(value = "NEW", target = "com/cobblemon/mod/common/entity/pokemon/PokemonEntity")
     )
     public PokemonEntity returnRideablePokemonEntity(Level world, Pokemon pokemon, EntityType<PokemonEntity> type, int i, DefaultConstructorMarker defaultConstructorMarker) {
         return new RideablePokemonEntity(world, pokemon);

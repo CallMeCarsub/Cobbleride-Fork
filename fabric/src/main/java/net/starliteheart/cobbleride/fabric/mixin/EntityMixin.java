@@ -1,7 +1,7 @@
 package net.starliteheart.cobbleride.fabric.mixin;
 
 import net.minecraft.world.entity.Entity;
-import net.starliteheart.cobbleride.common.config.CobbleRideConfig;
+import net.starliteheart.cobbleride.common.CobbleRideMod;
 import net.starliteheart.cobbleride.common.entity.pokemon.RideablePokemonEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,7 +17,7 @@ public class EntityMixin {
     @Inject(method = "removeVehicle", at = @At("HEAD"), cancellable = true)
     private void addDismountHandler(CallbackInfo ci) {
         if (vehicle instanceof RideablePokemonEntity pokemon) {
-            if (!pokemon.onGround() && pokemon.isFlying() && !CobbleRideConfig.SERVER.canDismountInMidair)
+            if (!pokemon.onGround() && pokemon.isFlying() && !CobbleRideMod.config.getGeneral().getCanDismountInAir())
                 ci.cancel();
         }
     }

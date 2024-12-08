@@ -34,8 +34,9 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.phys.Vec2
 import net.minecraft.world.phys.Vec3
+import net.starliteheart.cobbleride.common.CobbleRideMod
 import net.starliteheart.cobbleride.common.api.pokemon.RideablePokemonSpecies
-import net.starliteheart.cobbleride.common.config.CobbleRideConfig.SERVER.*
+import net.starliteheart.cobbleride.common.config.CobbleRideConfig
 import net.starliteheart.cobbleride.common.net.messages.RideState
 import net.starliteheart.cobbleride.common.net.messages.client.pokemon.ai.ClientMoveBehaviour
 import net.starliteheart.cobbleride.common.net.messages.client.pokemon.update.RidePokemonStateUpdatePacket
@@ -63,14 +64,17 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
     // Used clientside to ensure that we can still access move behaviour for resolving ride logic
     var moveBehaviour: ClientMoveBehaviour = ClientMoveBehaviour(exposedForm.behaviour.moving)
 
+    private val config: CobbleRideConfig
+        get() = CobbleRideMod.config
+
     private var lastRiderPosition: Vec3? = null
     private var shouldSinkInWater = false
     private var sprintCooldownScale = 0F
     var sprintStaminaScale = 0F
     val canSprint: Boolean
-        get() = canRidePokemonSprint
+        get() = config.sprinting.canRidePokemonSprint
     val canExhaust: Boolean
-        get() = canRidePokemonExhaust
+        get() = config.sprinting.canRidePokemonExhaust
     var isExhausted = false
 
     var isRideAscending: Boolean = false
@@ -295,7 +299,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         }
 
         // If shared water breathing is allowed, check mount and apply if it has the effect
-        if (moveBehaviour.swim.canBreatheUnderwater && isWaterBreathingShared) {
+        if (moveBehaviour.swim.canBreatheUnderwater && config.general.isWaterBreathingShared) {
             player.addEffect(MobEffectInstance(MobEffects.WATER_BREATHING, 60, 0, false, false, false))
         }
 
@@ -322,7 +326,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         }
 
         // Sprint control logic
-        if (canSprint && (!isInWater || canSprintInWater) && (!isFlying() || canSprintInAir)
+        if (canSprint && (!isInWater || config.sprinting.canSprintInWater) && (!isFlying() || config.sprinting.canSprintInAir)
             && isRideSprinting && vec3.horizontalDistance() > 0 && !isExhausted
         ) {
             sprintCooldownScale = 0F
@@ -333,7 +337,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
                     player.isSprinting = true
                 }
                 if (canExhaust) {
-                    sprintStaminaScale = max(sprintStaminaScale - (1F / rideSprintMaxStamina), 0F)
+                    sprintStaminaScale = max(sprintStaminaScale - (1F / config.sprinting.maxStamina), 0F)
                 }
             } else {
                 isExhausted = true
@@ -354,13 +358,13 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         super.tick()
 
         // Resolve stamina recovery and exhaustion effects
-        if (canRidePokemonSprint) {
+        if (config.sprinting.canRidePokemonSprint) {
             if (!this.isSprinting) {
                 if (sprintStaminaScale < 1F) {
-                    if (rideSprintRecoveryDelay > 0 && sprintCooldownScale < 1F) {
-                        sprintCooldownScale = min(sprintCooldownScale + (1F / rideSprintRecoveryDelay), 1F)
+                    if (config.sprinting.recoveryDelay > 0 && sprintCooldownScale < 1F) {
+                        sprintCooldownScale = min(sprintCooldownScale + (1F / config.sprinting.recoveryDelay), 1F)
                     } else {
-                        sprintStaminaScale = min(sprintStaminaScale + (1F / rideSprintRecoveryTime), 1F)
+                        sprintStaminaScale = min(sprintStaminaScale + (1F / config.sprinting.recoveryTime), 1F)
                     }
 
                     // Emit particles if exhausted, every X ticks
@@ -398,9 +402,9 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         if (isFlyingOrSwimming) {
             val verticalSpeed = (
                     if (isFlying()) {
-                        airVerticalClimbSpeed
+                        config.general.airVerticalClimbSpeed
                     } else {
-                        waterVerticalClimbSpeed
+                        config.general.waterVerticalClimbSpeed
                     }
                     ).toFloat()
             if (isRideAscending && !isRideDescending) {
@@ -414,11 +418,11 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
     }
 
     override fun getRiddenSpeed(player: Player): Float {
-        val speedModifier = if (doesSpeedStatAffectSpeed) {
-            val minSpeedStat = minSpeedStatThreshold
-            val maxSpeedStat = maxSpeedStatThreshold
-            val minSpeedModifier = minSpeedStatModifier
-            val maxSpeedModifier = maxSpeedStatModifier
+        val speedModifier = if (config.speedStat.affectsSpeed) {
+            val minSpeedStat = config.speedStat.minStatThreshold
+            val maxSpeedStat = config.speedStat.maxStatThreshold
+            val minSpeedModifier = config.speedStat.minSpeedModifier
+            val maxSpeedModifier = config.speedStat.maxSpeedModifier
             val clampedSpeedStat = pokemon.speed.coerceIn(minSpeedStat, maxSpeedStat).toDouble()
             val scaledSpeedStat = (clampedSpeedStat - minSpeedStat) / (maxSpeedStat - minSpeedStat)
             minSpeedModifier + scaledSpeedStat * (maxSpeedModifier - minSpeedModifier)
@@ -427,7 +431,8 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         }
 
         // Get land, water, air speed modifiers based on behaviour settings and data
-        val mediumSpeed = MoLangRuntime().resolveFloat(if (getCurrentPoseType() in setOf(PoseType.FLY, PoseType.HOVER)) {
+        val mediumSpeed = MoLangRuntime().resolveFloat(
+            if (getCurrentPoseType() in setOf(PoseType.FLY, PoseType.HOVER)) {
                 moveBehaviour.fly.flySpeedHorizontal
             } else if (isEyeInFluid(FluidTags.WATER) || isEyeInFluid(FluidTags.LAVA)) {
                 moveBehaviour.swim.swimSpeed
@@ -436,37 +441,38 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
             }
         )
         val mediumModifier = if (getCurrentPoseType() in setOf(PoseType.FLY, PoseType.HOVER)) {
-            (rideData?.airSpeedModifier ?: 1.0F) * globalAirSpeedModifier
+            (rideData?.airSpeedModifier ?: 1.0F) * config.general.globalAirSpeedModifier
         } else if (isInWater || isInLava) {
             // Adds a little speed to submerged Pokemon for better ride feel
-            (rideData?.waterSpeedModifier ?: 1.0F) * globalWaterSpeedModifier * if (getIsSubmerged()) {
-                2.0F
+            (rideData?.waterSpeedModifier ?: 1.0F) * config.general.globalWaterSpeedModifier * if (getIsSubmerged()) {
+                config.general.underwaterSpeedModifier
             } else {
-                1.0F
+                1.0
             }
         } else {
-            (rideData?.landSpeedModifier ?: 1.0F) * globalLandSpeedModifier
+            (rideData?.landSpeedModifier ?: 1.0F) * config.general.globalLandSpeedModifier
         }
 
         val sprintModifier = if (this.isSprinting) {
-            rideSprintingSpeed / 1.3
+            config.sprinting.rideSprintSpeed / 1.3
         } else if (this.isExhausted) {
-            rideSprintExhaustionSpeed
+            config.sprinting.exhaustionSpeed
         } else {
             1.0
         }
 
         // Calculate final adjusted speed
         val baseSpeed =
-            getAttributeValue(Attributes.MOVEMENT_SPEED) * globalBaseSpeedModifier * (rideData?.baseSpeedModifier
+            getAttributeValue(Attributes.MOVEMENT_SPEED) * config.general.globalBaseSpeedModifier * (rideData?.baseSpeedModifier
                 ?: 1.0F)
         val adjustedSpeed = baseSpeed * mediumSpeed * mediumModifier * speedModifier * sprintModifier
 
-        return (if (rideSpeedLimit > 0) {
-            min(adjustedSpeed, rideSpeedLimit)
-        } else {
-            adjustedSpeed
-        }
+        return (
+                if (config.general.rideSpeedLimit > 0) {
+                    min(adjustedSpeed, config.general.rideSpeedLimit)
+                } else {
+                    adjustedSpeed
+                }
                 ).toFloat()
     }
 
