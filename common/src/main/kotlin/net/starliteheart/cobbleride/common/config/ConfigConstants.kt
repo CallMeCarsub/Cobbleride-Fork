@@ -18,12 +18,12 @@ object ConfigConstants {
     object SpeedLimit {
         const val VALUE: Double = 0.0
         const val MIN: Double = 0.0
-        const val MAX: Double = 4.2
+        const val MAX: Double = 120.0
     }
 
     object Feature {
         const val IS_WATER_BREATHING_SHARED: Boolean = true
-        const val CAN_DISMOUNT_IN_AIR: Boolean = false
+        const val CAN_DISMOUNT_IN_MIDAIR: Boolean = false
     }
 
     object SpeedStat {

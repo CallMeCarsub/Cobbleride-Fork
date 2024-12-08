@@ -72,9 +72,9 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
     private var sprintCooldownScale = 0F
     var sprintStaminaScale = 0F
     val canSprint: Boolean
-        get() = config.sprinting.canRidePokemonSprint
+        get() = config.sprinting.canSprint
     val canExhaust: Boolean
-        get() = config.sprinting.canRidePokemonExhaust
+        get() = config.sprinting.canExhaust
     var isExhausted = false
 
     var isRideAscending: Boolean = false
@@ -268,7 +268,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         return super.mobInteract(player, hand)
     }
 
-    fun shouldRiderSit(): Boolean = rideData != null && rideData!!.shouldRiderSit
+    fun shouldRiderSit(): Boolean = rideData?.shouldRiderSit ?: true
 
     override fun tickRidden(player: Player, vec3: Vec3) {
         super.tickRidden(player, vec3)
@@ -358,22 +358,20 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         super.tick()
 
         // Resolve stamina recovery and exhaustion effects
-        if (config.sprinting.canRidePokemonSprint) {
-            if (!this.isSprinting) {
-                if (sprintStaminaScale < 1F) {
-                    if (config.sprinting.recoveryDelay > 0 && sprintCooldownScale < 1F) {
-                        sprintCooldownScale = min(sprintCooldownScale + (1F / config.sprinting.recoveryDelay), 1F)
-                    } else {
-                        sprintStaminaScale = min(sprintStaminaScale + (1F / config.sprinting.recoveryTime), 1F)
-                    }
-
-                    // Emit particles if exhausted, every X ticks
-                    if (isExhausted && tickCount % 4 == 0) {
-                        emitParticle(this, ParticleTypes.FALLING_WATER)
-                    }
+        if (canSprint && !this.isSprinting) {
+            if (sprintStaminaScale < 1F) {
+                if (config.sprinting.recoveryDelay > 0 && sprintCooldownScale < 1F) {
+                    sprintCooldownScale = min(sprintCooldownScale + (1F / config.sprinting.recoveryDelay), 1F)
                 } else {
-                    isExhausted = false
+                    sprintStaminaScale = min(sprintStaminaScale + (1F / config.sprinting.recoveryTime), 1F)
                 }
+
+                // Emit particles if exhausted, every X ticks
+                if (isExhausted && tickCount % 4 == 0) {
+                    emitParticle(this, ParticleTypes.FALLING_WATER)
+                }
+            } else {
+                isExhausted = false
             }
         }
     }
@@ -469,7 +467,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
 
         return (
                 if (config.general.rideSpeedLimit > 0) {
-                    min(adjustedSpeed, config.general.rideSpeedLimit)
+                    min(adjustedSpeed, config.general.rideSpeedLimit / 43.17)
                 } else {
                     adjustedSpeed
                 }

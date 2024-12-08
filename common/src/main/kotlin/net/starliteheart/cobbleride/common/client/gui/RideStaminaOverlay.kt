@@ -14,8 +14,8 @@ class RideStaminaOverlay : Gui(Minecraft.getInstance()) {
         fun render(context: GuiGraphics) {
             val minecraft = Minecraft.getInstance()
 
-            // Do not render if any other screen is open
-            if (minecraft.screen != null) {
+            // Do not render if any other screen is open, or if gui should be hidden
+            if (minecraft.screen != null || minecraft.options.hideGui) {
                 return
             }
 

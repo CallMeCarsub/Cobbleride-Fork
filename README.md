@@ -1,49 +1,87 @@
-# cobbleride-multiplatform
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it
-easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file)
-  or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line)
-  or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.com/StarliteHeart/cobbleride-multiplatform.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.com/StarliteHeart/cobbleride-multiplatform/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+# Cobblemon: Ride On!
 
 ***
+
+####
+
+***
+
+### Server Configuration
+
+#### General
+
+| Option                   | Description                                                                                                                                                                                 | Default | Min  | Max   |
+|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|------|-------|
+| globalBaseSpeedModifier  | Multiplies the speed of all Pokemon across all mediums.                                                                                                                                     | 1.0     | 0.0  | 5.0   |
+| globalLandSpeedModifier  | Multiplies the speed of all Pokemon traveling on land.                                                                                                                                      | 1.0     | 0.0  | 5.0   |
+| globalWaterSpeedModifier | Multiplies the speed of all Pokemon traveling atop or through fluids.                                                                                                                       | 1.0     | 0.0  | 5.0   |
+| globalAirSpeedModifier   | Multiplies the speed of all Pokemon while flying.                                                                                                                                           | 1.0     | 0.0  | 5.0   |
+| underwaterSpeedModifier  | Multiplies the speed of all Pokemon while diving. Stacks with globalWaterSpeedModifier.                                                                                                     | 2.0     | 0.0  | 5.0   |
+| waterVerticalClimbSpeed  | The rate at which Pokemon ascend and descend in water while diving.                                                                                                                         | 2.0     | 0.0  | 5.0   |
+| airVerticalClimbSpeed    | The rate at which Pokemon ascend and descend while flying.                                                                                                                                  | 0.5     | 0.0. | 5.0   |
+| rideSpeedLimit           | The upper limit on how fast ride Pokemon are allowed to move, in m/s (blocks per second). Useful for servers, to restrict how quickly players can move around. Set to 0 to disable.         | 0.0     | 0.0  | 120.0 |
+| isWaterBreathingShared   | Enables whether a Pokemon that can breathe underwater shares its water breathing with its rider.                                                                                            | true    |      |       |
+| canDismountInMidair      | Enables whether a rider can dismount from a Pokemon while flying. Setting this to false will not prevent manual dismount via recall, but riders are advised to ride responsibly and safely. | false   |      |       |
+
+#### Speed Stat
+
+| Option           | Description                                                                    | Default | Min              | Max |
+|------------------|--------------------------------------------------------------------------------|---------|------------------|-----|
+| affectsSpeed     | Enables whether the Speed stat of a Pokemon affects its ride speed.            | true    |                  |     |
+| minStatThreshold | Any Speed stat below or equal to this value yields the minimum speed modifier. | 20      | 0                | 500 |
+| maxStatThreshold | Any Speed stat above or equal to this value yields the maximum speed modifier. | 400     | minStatThreshold | 500 |
+| minSpeedModifier | The speed multiplier at the minimum Speed stat threshold.                      | 0.5     | 0.0              | 5.0 |
+| maxSpeedModifier | The speed multiplier at the maximum Speed stat threshold.                      | 4.0     | minSpeedModifier | 5.0 |
+
+#### Sprinting
+
+| Option           | Description                                                                        | Default | Min | Max  |
+|------------------|------------------------------------------------------------------------------------|---------|-----|------|
+| canSprint        | Enables whether ride Pokemon can sprint.                                           | true    |     |      |
+| rideSprintSpeed  | The speed multiplier applied when a Pokemon is sprinting.                          | 1.5     | 1.0 | 5.0  |
+| canSprintInWater | Enables whether ride Pokemon can sprint in fluids.                                 | true    |     |      |
+| canSprintInAir   | Enables whether ride Pokemon can sprint in air.                                    | false   |     |      |
+| canExhaust       | Enables whether ride Pokemon can become exhausted if sprinting for too long.       | true    |     |      |
+| maxStamina       | The time it takes to fully deplete stamina from full to zero, in ticks.            | 200     | 1   | 6000 |
+| recoveryTime     | The time it takes to fully recover stamina from zero to full, in ticks.            | 300     | 1   | 6000 |
+| recoveryDelay    | The time it takes for recovery to start after a Pokemon stops sprinting, in ticks. | 20      | 0   | 6000 |
+| maxSpeedModifier | The speed multiplier applied when a Pokemon is exhausted from sprinting.           | 0.5     | 0.0 | 1.0  |
+
+***
+
+### Pokemon Configuration
+
+#### Definition
+
+| Property           | Description                                                                                                                    | Default     |
+|--------------------|--------------------------------------------------------------------------------------------------------------------------------|-------------|
+| name               | The name of the Pokemon. Required in form objects to define the form to align the data to.                                     | "Normal"    |
+| offsets            | A map of vectors, defining passenger attachment point offsets for the rider. See below for valid offset names.                 | { 0, 0, 0 } |
+| shouldRiderSit     | Enables whether the rider should be sitting or standing/walking while riding.                                                  | true        |
+| baseSpeedModifier  | Multiplies the speed of this Pokemon across all mediums.                                                                       | 1.0         |
+| landSpeedModifier  | Multiplies the speed of this Pokemon traveling on land.                                                                        | 1.0         |
+| waterSpeedModifier | Multiplies the speed of this Pokemon traveling atop or through fluids.                                                         | 1.0         |
+| airSpeedModifier   | Multiplies the speed of this Pokemon while flying.                                                                             | 1.0         |
+| forms              | Array of additional objects, each reflecting a different form or variant of the Pokemon. Uses all of the same fields as above. | []          |
+
+#### Rider Offset Types
+
+All offsets listed below are assumed to be offset from the DEFAULT. A Pokemon in a WALKING state, for example, will use
+the DEFAULT offset plus the WALKING offset. All offsets are mutually exclusive unless otherwise specified; for instance,
+a HOVERING offset would override a FLYING offset while a Pokemon is flying and idle, and a FLYING Pokemon that is moving
+would not add both the FLYING and WALKING offsets to the DEFAULT.
+
+| Type      | Description                                                                            | Fallback    |
+|-----------|----------------------------------------------------------------------------------------|-------------|
+| DEFAULT   | The default offset, sets the base atop which all other offsets are compounded.         | { 0, 0, 0 } |
+| WALKING   | Used when the Pokemon is walking.                                                      | DEFAULT     |
+| SWIMMING  | Used when a Pokemon is idle or moving on the surface of a fluid.                       | DEFAULT     |
+| FLOATING  | Used when a Pokemon is idle on the surface of a fluid.                                 | SWIMMING    |
+| DIVING    | Used when a Pokemon is idle or moving while submerged in fluid.                        | DEFAULT     |
+| SUSPENDED | Used when a Pokemon is idle while submerged in fluid.                                  | SUSPENDED   |
+| FLYING    | Used when a Pokemon is idle or moving while flying.                                    | DEFAULT     |
+| HOVERING  | Used when a Pokemon is idle while flying.                                              | HOVERING    |
+| SHEARED   | Used for Pokemon which are shearable and have been sheared. Stacks with other offsets. | DEFAULT     |
 
 # Editing this README
 

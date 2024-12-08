@@ -17,7 +17,7 @@ public class EntityMixin {
     @Inject(method = "removeVehicle", at = @At("HEAD"), cancellable = true)
     private void addDismountHandler(CallbackInfo ci) {
         if (vehicle instanceof RideablePokemonEntity pokemon) {
-            if (!pokemon.onGround() && pokemon.isFlying() && !CobbleRideMod.config.getGeneral().getCanDismountInAir())
+            if (!pokemon.onGround() && pokemon.isFlying() && !CobbleRideMod.config.getGeneral().getCanDismountInMidair())
                 ci.cancel();
         }
     }

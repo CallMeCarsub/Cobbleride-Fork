@@ -43,7 +43,7 @@ class CobbleRideConfig {
         var isWaterBreathingShared: Boolean = ConfigConstants.Feature.IS_WATER_BREATHING_SHARED
 
         @SerializedName("canDismountInMidair")
-        var canDismountInAir: Boolean = ConfigConstants.Feature.CAN_DISMOUNT_IN_AIR
+        var canDismountInMidair: Boolean = ConfigConstants.Feature.CAN_DISMOUNT_IN_MIDAIR
     }
 
     inner class SpeedStat {
@@ -64,8 +64,8 @@ class CobbleRideConfig {
     }
 
     inner class Sprinting {
-        @SerializedName("canRidePokemonSprint")
-        var canRidePokemonSprint: Boolean = ConfigConstants.Sprinting.ACTIVE
+        @SerializedName("canSprint")
+        var canSprint: Boolean = ConfigConstants.Sprinting.ACTIVE
 
         @SerializedName("rideSprintSpeed")
         var rideSprintSpeed: Double = ConfigConstants.Sprinting.Speed.VALUE
@@ -76,8 +76,8 @@ class CobbleRideConfig {
         @SerializedName("canSprintInAir")
         var canSprintInAir: Boolean = ConfigConstants.Sprinting.IN_AIR
 
-        @SerializedName("canRidePokemonExhaust")
-        var canRidePokemonExhaust: Boolean = ConfigConstants.Sprinting.Exhaust.ACTIVE
+        @SerializedName("canExhaust")
+        var canExhaust: Boolean = ConfigConstants.Sprinting.Exhaust.ACTIVE
 
         @SerializedName("maxStamina")
         var maxStamina: Int = ConfigConstants.Sprinting.Stamina.VALUE

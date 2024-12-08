@@ -33,7 +33,7 @@ class SpawnRidePokemonPacket(
     private val nickname: MutableComponent?,
     private val labelLevel: Int,
     private val poseType: PoseType,
-    private val unbattlable: Boolean,
+    private val unbattleable: Boolean,
     private val hideLabel: Boolean,
     private val caughtBall: ResourceLocation,
     private val spawnYaw: Float,
@@ -83,7 +83,7 @@ class SpawnRidePokemonPacket(
         buffer.writeNullable(this.nickname) { _, v -> buffer.writeText(v) }
         buffer.writeInt(this.labelLevel)
         buffer.writeEnumConstant(this.poseType)
-        buffer.writeBoolean(this.unbattlable)
+        buffer.writeBoolean(this.unbattleable)
         buffer.writeBoolean(this.hideLabel)
         buffer.writeIdentifier(this.caughtBall)
         buffer.writeFloat(this.spawnYaw)
@@ -115,7 +115,7 @@ class SpawnRidePokemonPacket(
         entity.entityData.set(PokemonEntity.SPECIES, entity.pokemon.species.resourceIdentifier.toString())
         entity.entityData.set(PokemonEntity.ASPECTS, aspects)
         entity.entityData.set(PokemonEntity.POSE_TYPE, poseType)
-        entity.entityData.set(PokemonEntity.UNBATTLEABLE, unbattlable)
+        entity.entityData.set(PokemonEntity.UNBATTLEABLE, unbattleable)
         entity.entityData.set(PokemonEntity.HIDE_LABEL, hideLabel)
         entity.entityData.set(PokemonEntity.SPAWN_DIRECTION, spawnYaw)
         entity.entityData.set(PokemonEntity.FRIENDSHIP, friendship)
@@ -141,7 +141,7 @@ class SpawnRidePokemonPacket(
             val nickname = buffer.readNullable { buffer.readText().copy() }
             val labelLevel = buffer.readInt()
             val poseType = buffer.readEnumConstant(PoseType::class.java)
-            val unbattlable = buffer.readBoolean()
+            val unbattleable = buffer.readBoolean()
             val hideLabel = buffer.readBoolean()
             val caughtBall = buffer.readIdentifier()
             val spawnAngle = buffer.readFloat()
@@ -164,7 +164,7 @@ class SpawnRidePokemonPacket(
                 nickname,
                 labelLevel,
                 poseType,
-                unbattlable,
+                unbattleable,
                 hideLabel,
                 caughtBall,
                 spawnAngle,

@@ -23,7 +23,7 @@ public class CobbleRideModNeoForge {
         if (!(event.getEntityBeingMounted() instanceof RideablePokemonEntity pokemon)) return;
 
         // All trainers are encouraged to buckle up when flying for their own safety!
-        if (!pokemon.onGround() && pokemon.isFlying() && !CobbleRideMod.config.getGeneral().getCanDismountInAir())
+        if (!pokemon.onGround() && pokemon.isFlying() && !CobbleRideMod.config.getGeneral().getCanDismountInMidair())
             event.setCanceled(true);
     }
 
