@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static net.starliteheart.cobbleride.common.client.CobbleRideClientUtilsKt.blitRideIcon;
 import static net.starliteheart.cobbleride.common.util.CobbleRideUtilsKt.rideableResource;
 
-@Mixin(value = PCGUI.class, remap = false)
+@Mixin(value = PCGUI.class)
 public abstract class PCGUIMixin {
     @Inject(
             method = "render", at = @At(
