@@ -5,15 +5,21 @@ import com.cobblemon.mod.common.api.pokeball.PokeBalls
 import com.cobblemon.mod.common.api.pokemon.PokemonSpecies
 import com.cobblemon.mod.common.entity.PoseType
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
+import com.cobblemon.mod.common.mixin.invoker.ClientPlayNetworkHandlerInvoker
 import com.cobblemon.mod.common.net.messages.client.spawn.SpawnExtraDataEntityPacket
 import com.cobblemon.mod.common.pokemon.Gender
 import com.cobblemon.mod.common.util.*
+import net.minecraft.client.Minecraft
+import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.MutableComponent
+import net.minecraft.network.protocol.PacketUtils
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.phys.Vec3
 import net.starliteheart.cobbleride.common.entity.pokemon.RideablePokemonEntity
+import net.starliteheart.cobbleride.common.mixin.accessor.SpawnExtraDataEntityPacketAccessor
 import net.starliteheart.cobbleride.common.net.messages.client.pokemon.ai.ClientMoveBehaviour
 import net.starliteheart.cobbleride.common.util.rideableResource
 import java.util.*
@@ -123,6 +129,33 @@ class SpawnRidePokemonPacket(
     }
 
     override fun checkType(entity: Entity): Boolean = entity is RideablePokemonEntity
+
+    @Suppress("CAST_NEVER_SUCCEEDS")
+    fun spawnRidePokemonAndApply(client: Minecraft) {
+        client.execute {
+            val player = client.player ?: return@execute
+            val world = player.level() as? ClientLevel ?: return@execute
+            // This is a copy pasta of ClientPlayNetworkHandler#onEntitySpawn
+            // This exists due to us needing to do everything it does except spawn the entity in the world.
+            // We invoke applyData then we add the entity to the world.
+            val vanillaSpawnPacket = (this as SpawnExtraDataEntityPacketAccessor).vanillaSpawnPacket
+            PacketUtils.ensureRunningOnSameThread(vanillaSpawnPacket, player.connection, client)
+            val entity = RideablePokemonEntity(world)
+            entity.recreateFromPacket(vanillaSpawnPacket)
+            entity.deltaMovement = Vec3(
+                vanillaSpawnPacket.xa,
+                vanillaSpawnPacket.ya,
+                vanillaSpawnPacket.za
+            )
+            // Cobblemon start
+            if (this.checkType(entity)) {
+                this.applyData(entity)
+            }
+            // Cobblemon end
+            world.addEntity(entity)
+            (player.connection as ClientPlayNetworkHandlerInvoker).callPlaySpawnSound(entity)
+        }
+    }
 
     companion object {
         val ID = rideableResource("spawn_ride_pokemon_entity")

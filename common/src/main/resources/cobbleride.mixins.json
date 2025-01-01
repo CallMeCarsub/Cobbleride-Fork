@@ -6,8 +6,6 @@
   "client": [
     "PCGUIMixin",
     "PokemonInfoWidgetMixin",
-    "SpawnExtraDataEntityPacketMixin",
-    "SpawnRidePokemonPacketMixin",
     "SummaryMixin",
     "accessor.SpawnExtraDataEntityPacketAccessor"
   ],
