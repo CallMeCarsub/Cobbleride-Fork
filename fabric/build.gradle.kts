@@ -39,9 +39,17 @@ dependencies {
 
 tasks {
     processResources {
-        inputs.property("version", project.version)
+        inputs.property("mod_version", project.version)
+        inputs.property("minecraft_version", rootProject.property("minecraft_version"))
+        inputs.property("fabric_loader_version", rootProject.property("fabric_loader_version"))
+        inputs.property("cobblemon_version", rootProject.property("cobblemon_version"))
         filesMatching("fabric.mod.json") {
-            expand("version" to project.version)
+            expand(
+                "mod_version" to project.version,
+                "minecraft_version" to rootProject.property("minecraft_version"),
+                "fabric_loader_version" to rootProject.property("fabric_loader_version"),
+                "cobblemon_version" to rootProject.property("cobblemon_version")
+            )
         }
     }
 
