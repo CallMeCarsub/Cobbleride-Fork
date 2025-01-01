@@ -11,12 +11,10 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.starliteheart.cobbleride.common.CobbleRideMod;
+import net.starliteheart.cobbleride.common.client.CobbleRideClient;
 import net.starliteheart.cobbleride.common.client.gui.RideStaminaOverlay;
 import net.starliteheart.cobbleride.common.client.keybind.CobbleRideKeyBinds;
-import net.starliteheart.cobbleride.common.entity.pokemon.RideablePokemonEntity;
-import net.starliteheart.cobbleride.common.net.messages.server.pokemon.sync.GetRidePokemonPassengersPacket;
 
 @Mod(value = CobbleRideMod.MOD_ID, dist = Dist.CLIENT)
 public class CobbleRideModNeoForgeClient {
@@ -25,7 +23,8 @@ public class CobbleRideModNeoForgeClient {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         modBus.addListener(this::registerRideKeyBindings);
         NeoForge.EVENT_BUS.addListener(this::renderRideStaminaOverlay);
-        NeoForge.EVENT_BUS.addListener(this::getRidePokemonPassengers);
+
+        CobbleRideClient.INSTANCE.initialize();
     }
 
     private void registerRideKeyBindings(RegisterKeyMappingsEvent event) {
@@ -38,12 +37,6 @@ public class CobbleRideModNeoForgeClient {
     private void renderRideStaminaOverlay(RenderGuiLayerEvent.Pre event) {
         if (event.getName() == VanillaGuiLayers.CHAT) {
             RideStaminaOverlay.render(event.getGuiGraphics());
-        }
-    }
-
-    private void getRidePokemonPassengers(EntityJoinLevelEvent event) {
-        if (event.getEntity() instanceof RideablePokemonEntity pokemon) {
-            new GetRidePokemonPassengersPacket(pokemon.getId()).sendToServer();
         }
     }
 }

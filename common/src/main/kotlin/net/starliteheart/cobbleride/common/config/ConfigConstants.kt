@@ -58,6 +58,7 @@ object ConfigConstants {
         object Exhaust {
             const val ACTIVE: Boolean = true
             const val VALUE: Double = 0.5
+            const val DURATION: Double = 1.0
             const val MIN: Double = 0.0
             const val MAX: Double = 1.0
         }

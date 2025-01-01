@@ -10,18 +10,18 @@
 
 #### General
 
-| Option                   | Description                                                                                                                                                                                 | Default | Min  | Max   |
-|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|------|-------|
-| globalBaseSpeedModifier  | Multiplies the speed of all Pokemon across all mediums.                                                                                                                                     | 1.0     | 0.0  | 5.0   |
-| globalLandSpeedModifier  | Multiplies the speed of all Pokemon traveling on land.                                                                                                                                      | 1.0     | 0.0  | 5.0   |
-| globalWaterSpeedModifier | Multiplies the speed of all Pokemon traveling atop or through fluids.                                                                                                                       | 1.0     | 0.0  | 5.0   |
-| globalAirSpeedModifier   | Multiplies the speed of all Pokemon while flying.                                                                                                                                           | 1.0     | 0.0  | 5.0   |
-| underwaterSpeedModifier  | Multiplies the speed of all Pokemon while diving. Stacks with globalWaterSpeedModifier.                                                                                                     | 2.0     | 0.0  | 5.0   |
-| waterVerticalClimbSpeed  | The rate at which Pokemon ascend and descend in water while diving.                                                                                                                         | 2.0     | 0.0  | 5.0   |
-| airVerticalClimbSpeed    | The rate at which Pokemon ascend and descend while flying.                                                                                                                                  | 0.5     | 0.0. | 5.0   |
-| rideSpeedLimit           | The upper limit on how fast ride Pokemon are allowed to move, in m/s (blocks per second). Useful for servers, to restrict how quickly players can move around. Set to 0 to disable.         | 0.0     | 0.0  | 120.0 |
-| isWaterBreathingShared   | Enables whether a Pokemon that can breathe underwater shares its water breathing with its rider.                                                                                            | true    |      |       |
-| canDismountInMidair      | Enables whether a rider can dismount from a Pokemon while flying. Setting this to false will not prevent manual dismount via recall, but riders are advised to ride responsibly and safely. | false   |      |       |
+| Option                   | Description                                                                                                                                                                                 | Default | Min | Max   |
+|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|-----|-------|
+| globalBaseSpeedModifier  | Multiplies the speed of all Pokemon across all mediums.                                                                                                                                     | 1.0     | 0.0 | 5.0   |
+| globalLandSpeedModifier  | Multiplies the speed of all Pokemon traveling on land.                                                                                                                                      | 1.0     | 0.0 | 5.0   |
+| globalWaterSpeedModifier | Multiplies the speed of all Pokemon traveling atop or through fluids.                                                                                                                       | 1.0     | 0.0 | 5.0   |
+| globalAirSpeedModifier   | Multiplies the speed of all Pokemon while flying.                                                                                                                                           | 1.0     | 0.0 | 5.0   |
+| underwaterSpeedModifier  | Multiplies the speed of all Pokemon while diving. Stacks with globalWaterSpeedModifier.                                                                                                     | 2.0     | 0.0 | 5.0   |
+| waterVerticalClimbSpeed  | The rate at which Pokemon ascend and descend in water while diving.                                                                                                                         | 2.0     | 0.0 | 5.0   |
+| airVerticalClimbSpeed    | The rate at which Pokemon ascend and descend while flying.                                                                                                                                  | 0.5     | 0.0 | 5.0   |
+| rideSpeedLimit           | The upper limit on how fast ride Pokemon are allowed to move, in m/s (blocks per second). Useful for servers, to restrict how quickly players can move around. Set to 0 to disable.         | 0.0     | 0.0 | 120.0 |
+| isWaterBreathingShared   | Enables whether a Pokemon that can breathe underwater shares its water breathing with its rider.                                                                                            | true    |     |       |
+| canDismountInMidair      | Enables whether a rider can dismount from a Pokemon while flying. Setting this to false will not prevent manual dismount via recall, but riders are advised to ride responsibly and safely. | false   |     |       |
 
 #### Speed Stat
 
@@ -35,17 +35,18 @@
 
 #### Sprinting
 
-| Option           | Description                                                                        | Default | Min | Max  |
-|------------------|------------------------------------------------------------------------------------|---------|-----|------|
-| canSprint        | Enables whether ride Pokemon can sprint.                                           | true    |     |      |
-| rideSprintSpeed  | The speed multiplier applied when a Pokemon is sprinting.                          | 1.5     | 1.0 | 5.0  |
-| canSprintInWater | Enables whether ride Pokemon can sprint in fluids.                                 | true    |     |      |
-| canSprintInAir   | Enables whether ride Pokemon can sprint in air.                                    | false   |     |      |
-| canExhaust       | Enables whether ride Pokemon can become exhausted if sprinting for too long.       | true    |     |      |
-| maxStamina       | The time it takes to fully deplete stamina from full to zero, in ticks.            | 200     | 1   | 6000 |
-| recoveryTime     | The time it takes to fully recover stamina from zero to full, in ticks.            | 300     | 1   | 6000 |
-| recoveryDelay    | The time it takes for recovery to start after a Pokemon stops sprinting, in ticks. | 20      | 0   | 6000 |
-| maxSpeedModifier | The speed multiplier applied when a Pokemon is exhausted from sprinting.           | 0.5     | 0.0 | 1.0  |
+| Option             | Description                                                                        | Default | Min | Max  |
+|--------------------|------------------------------------------------------------------------------------|---------|-----|------|
+| canSprint          | Enables whether ride Pokemon can sprint.                                           | true    |     |      |
+| rideSprintSpeed    | The speed multiplier applied when a Pokemon is sprinting.                          | 1.5     | 1.0 | 5.0  |
+| canSprintInWater   | Enables whether ride Pokemon can sprint in fluids.                                 | true    |     |      |
+| canSprintInAir     | Enables whether ride Pokemon can sprint in air.                                    | false   |     |      |
+| canExhaust         | Enables whether ride Pokemon can become exhausted if sprinting for too long.       | true    |     |      |
+| maxStamina         | The time it takes to fully deplete stamina from full to zero, in ticks.            | 200     | 1   | 6000 |
+| recoveryTime       | The time it takes to fully recover stamina from zero to full, in ticks.            | 300     | 1   | 6000 |
+| recoveryDelay      | The time it takes for recovery to start after a Pokemon stops sprinting, in ticks. | 20      | 0   | 6000 |
+| exhaustionSpeed    | The speed multiplier applied when a Pokemon is exhausted from sprinting.           | 0.5     | 0.0 | 1.0  |
+| exhaustionDuration | The ratio of recovered stamina required to clear exhaustion.                       | 1.0     | 0.0 | 1.0  |
 
 ***
 

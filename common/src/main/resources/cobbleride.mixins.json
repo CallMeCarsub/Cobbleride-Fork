@@ -12,6 +12,9 @@
   ],
   "mixins": [
     "CobblemonNetworkMixin",
+    "EntityMixin",
+    "LivingEntityMixin",
+    "PokemonBattleMixin",
     "PokemonMixin",
     "PokemonServerDelegateMixin"
   ],

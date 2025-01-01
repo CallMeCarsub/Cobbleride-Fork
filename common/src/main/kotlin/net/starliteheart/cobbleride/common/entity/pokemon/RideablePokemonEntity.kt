@@ -3,6 +3,7 @@ package net.starliteheart.cobbleride.common.entity.pokemon
 import com.bedrockk.molang.runtime.MoLangRuntime
 import com.cobblemon.mod.common.api.pokemon.status.Statuses
 import com.cobblemon.mod.common.api.reactive.SimpleObservable
+import com.cobblemon.mod.common.entity.PlatformType
 import com.cobblemon.mod.common.entity.PoseType
 import com.cobblemon.mod.common.entity.pokemon.PokemonBehaviourFlag
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
@@ -115,7 +116,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
                 }
 
     private fun isOnWaterSurface(): Boolean =
-        isInWater && !getIsSubmerged()
+        this.isInWater && !this.isUnderWater
 
     private fun isAbleToDive(): Boolean =
         moveBehaviour.swim.canSwimInWater && moveBehaviour.swim.canBreatheUnderwater
@@ -132,9 +133,9 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
             offsets[HOVERING]?.let { offset = offset.add(it) }
         } else if (isFlying() && hasOffset(FLYING)) {
             offsets[FLYING]?.let { offset = offset.add(it) }
-        } else if (getIsSubmerged() && isInPoseOfType(PoseType.FLOAT) && hasOffset(SUSPENDED)) {
+        } else if (isUnderWater && isInPoseOfType(PoseType.FLOAT) && hasOffset(SUSPENDED)) {
             offsets[SUSPENDED]?.let { offset = offset.add(it) }
-        } else if (getIsSubmerged() && hasOffset(DIVING)) {
+        } else if (isUnderWater && hasOffset(DIVING)) {
             offsets[DIVING]?.let { offset = offset.add(it) }
         } else if (isOnWaterSurface() && isInPoseOfType(PoseType.STAND) && hasOffset(FLOATING)) {
             offsets[FLOATING]?.let { offset = offset.add(it) }
@@ -288,7 +289,8 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
 
         // Carry over logic from PokemonMoveControl, where non-diving Pokemon that can swim will tread water
         if ((this.isInLava && !moveBehaviour.swim.canBreatheUnderlava) ||
-            (moveBehaviour.swim.canSwimInWater && !moveBehaviour.swim.canBreatheUnderwater
+            (((moveBehaviour.swim.canSwimInWater && !moveBehaviour.swim.canBreatheUnderwater) ||
+                    (isAbleToDive() && isOnWaterSurface() && !isRideDescending))
                     && this.isInWater && this.getFluidHeight(
                 FluidTags.WATER
             ) > this.fluidJumpThreshold)
@@ -309,38 +311,28 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         }
 
         // When descending, disable water walking for diving Pokemon
-        shouldSinkInWater = isRideDescending && isInWater && isAbleToDive()
+        shouldSinkInWater = isAbleToDive() && (isRideDescending || (isOnWaterSurface() && this.getFluidHeight(
+            FluidTags.WATER
+        ) > this.fluidJumpThreshold))
 
-        // When ascending, disable water walking if applicable, or start flying
-        if (isRideAscending) {
-            if (isOnWaterSurface() && isAbleToDive() && this.getFluidHeight(FluidTags.WATER) > this.fluidJumpThreshold) {
-                // Because being able to stand on water means being affected by normal "ground" gravity,
-                //   We need to make sure we aren't TRYING to stand on it before we're fully out
-                shouldSinkInWater = true
-                this.jumpControl.jump()
-            } else if (moveBehaviour.fly.canFly && !this.isFlying() && !getIsSubmerged()) {
-                this.setBehaviourFlag(PokemonBehaviourFlag.FLYING, true)
-            } else {
-                shouldSinkInWater = false
-            }
+        // When ascending, ensure water walking stays disabled if applicable, or start flying
+        if (isRideAscending && moveBehaviour.fly.canFly && !this.isFlying() && !getIsSubmerged()) {
+            this.setBehaviourFlag(PokemonBehaviourFlag.FLYING, true)
         }
 
         // Sprint control logic
         if (canSprint && (!isInWater || config.sprinting.canSprintInWater) && (!isFlying() || config.sprinting.canSprintInAir)
-            && isRideSprinting && vec3.horizontalDistance() > 0 && !isExhausted
+            && isRideSprinting && vec3.horizontalDistance() > 0 && !isExhausted && sprintStaminaScale > 0F
         ) {
             sprintCooldownScale = 0F
-            if (sprintStaminaScale > 0) {
-                if (!level().isClientSide) {
-                    this.isSprinting = true
-                    // This may not be the best way to get an FOV change, but this will suffice until the first bugs inevitably happen
-                    player.isSprinting = true
-                }
-                if (canExhaust) {
-                    sprintStaminaScale = max(sprintStaminaScale - (1F / config.sprinting.maxStamina), 0F)
-                }
-            } else {
-                isExhausted = true
+            if (!level().isClientSide) {
+                this.isSprinting = true
+                // This may not be the best way to get an FOV change, but this will suffice until the first bugs inevitably happen
+                player.isSprinting = true
+            }
+            if (canExhaust) {
+                sprintStaminaScale = max(sprintStaminaScale - (1F / config.sprinting.maxStamina), 0F)
+                isExhausted = sprintStaminaScale == 0F
             }
         } else {
             if (!level().isClientSide) {
@@ -357,21 +349,45 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
     override fun tick() {
         super.tick()
 
+        if (isBattling) {
+            // Deploy a platform if a non-wild Pokemon is touching water but not underwater.
+            // This can't be done in the BattleMovementGoal as the sleep goal will override it.
+            // Clients also don't seem to have correct info about behavior
+            platform = if (ticksLived > 5
+                && ownerUUID != null
+                && isInWater && !isUnderWater
+                && !exposedForm.behaviour.moving.swim.canBreatheUnderwater && !exposedForm.behaviour.moving.swim.canWalkOnWater
+                && !isFlying()
+            ) {
+                PlatformType.getPlatformTypeForPokemon((exposedForm))
+            } else {
+                PlatformType.NONE
+            }
+        } else {
+            // Battle clone destruction
+            if (this.beamMode == 0 && this.isBattleClone()) {
+                discard()
+                return
+            }
+            platform = PlatformType.NONE
+
+        }
+
         // Resolve stamina recovery and exhaustion effects
-        if (canSprint && !this.isSprinting) {
-            if (sprintStaminaScale < 1F) {
+        if (canSprint && canExhaust) {
+            if (!this.isSprinting && sprintStaminaScale < 1F) {
                 if (config.sprinting.recoveryDelay > 0 && sprintCooldownScale < 1F) {
                     sprintCooldownScale = min(sprintCooldownScale + (1F / config.sprinting.recoveryDelay), 1F)
                 } else {
                     sprintStaminaScale = min(sprintStaminaScale + (1F / config.sprinting.recoveryTime), 1F)
                 }
+            }
 
-                // Emit particles if exhausted, every X ticks
-                if (isExhausted && tickCount % 4 == 0) {
-                    emitParticle(this, ParticleTypes.FALLING_WATER)
-                }
-            } else {
-                isExhausted = false
+            isExhausted = isExhausted && sprintStaminaScale < config.sprinting.exhaustionDuration
+
+            // Emit particles if exhausted, every X ticks
+            if (isExhausted && tickCount % 4 == 0) {
+                emitParticle(this, ParticleTypes.FALLING_WATER)
             }
         }
     }
@@ -381,13 +397,13 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
     }
 
     override fun getRiddenInput(player: Player, v: Vec3): Vec3 {
-        var yya = if (isEyeInFluid(FluidTags.WATER) && moveBehaviour.swim.canSwimInWater) {
-            0.2f
-        } else {
-            0f
-        }
+//        val yya = if (isEyeInFluid(FluidTags.WATER) && moveBehaviour.swim.canSwimInWater) {
+//            0.2f
+//        } else {
+//            0f
+//        }
         if (isImmobile) {
-            return Vec3(0.0, yya.toDouble(), 0.0)
+            return Vec3.ZERO
         }
 
         val xxa = player.xxa * 0.5f
@@ -395,9 +411,9 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         if (zza <= 0.0f) {
             zza *= 0.25f
         }
+        var yya = 0F;
 
-        val isFlyingOrSwimming = (isInWater && isAbleToDive()) || isFlying()
-        if (isFlyingOrSwimming) {
+        if ((isInWater && isAbleToDive()) || isInLava || isFlying()) {
             val verticalSpeed = (
                     if (isFlying()) {
                         config.general.airVerticalClimbSpeed
@@ -414,6 +430,19 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
 
         return Vec3(xxa.toDouble(), yya.toDouble(), zza.toDouble())
     }
+
+//    override fun getFluidFallingAdjustedMovement(d: Double, bl: Boolean, vec3: Vec3): Vec3 {
+//        val vec = super.getFluidFallingAdjustedMovement(d, bl, vec3)
+//        if (tickCount % 20 == 0) {
+//            println("vec3: $vec3")
+//            println("vec1: $vec")
+//        }
+//        return if (isVehicle && isAbleToDive() && getIsSubmerged() && abs(vec.y) <= 0.02) {
+//            Vec3(vec.x, 0.2, vec.z)
+//        } else {
+//            vec
+//        }
+//    }
 
     override fun getRiddenSpeed(player: Player): Float {
         val speedModifier = if (config.speedStat.affectsSpeed) {
@@ -442,7 +471,8 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
             (rideData?.airSpeedModifier ?: 1.0F) * config.general.globalAirSpeedModifier
         } else if (isInWater || isInLava) {
             // Adds a little speed to submerged Pokemon for better ride feel
-            (rideData?.waterSpeedModifier ?: 1.0F) * config.general.globalWaterSpeedModifier * if (getIsSubmerged()) {
+            (rideData?.waterSpeedModifier
+                ?: 1.0F) * config.general.globalWaterSpeedModifier * if (isAbleToDive() && getIsSubmerged()) {
                 config.general.underwaterSpeedModifier
             } else {
                 1.0
@@ -472,6 +502,16 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
                     adjustedSpeed
                 }
                 ).toFloat()
+    }
+
+    override fun getFluidFallingAdjustedMovement(d: Double, bl: Boolean, vec3: Vec3): Vec3 {
+        return super.getFluidFallingAdjustedMovement(
+            if (isAbleToDive() && isUnderWater) {
+                0.0
+            } else {
+                d
+            }, bl, vec3
+        )
     }
 
     @Suppress("UNCHECKED_CAST")

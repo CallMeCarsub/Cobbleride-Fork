@@ -1,5 +1,6 @@
 package net.starliteheart.cobbleride.common.mixin;
 
+import com.cobblemon.mod.common.entity.PlatformType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.entity.pokemon.PokemonServerDelegate;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -32,8 +33,9 @@ public abstract class PokemonServerDelegateMixin<T> {
                 z *= 0.25f;
             }
             Vec3 input = new Vec3(x, 0.0, z);
-            Boolean isRideableMoving = input.length() > 0.005F;
-            instance.set((EntityDataAccessor<Boolean>) arg, ((Boolean) object) || isRideableMoving);
+            boolean isRideableMoving = input.length() > 0.005F;
+            boolean hasPlatform = rideable.getPlatform() != PlatformType.NONE;
+            instance.set((EntityDataAccessor<Boolean>) arg, ((Boolean) object) || (!hasPlatform && isRideableMoving));
         } else {
             instance.set(arg, object);
         }

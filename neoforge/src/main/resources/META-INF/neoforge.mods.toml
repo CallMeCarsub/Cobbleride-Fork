@@ -1,6 +1,6 @@
 modLoader = "javafml"
 loaderVersion = "[4,)"
-license = "Mozilla Public License 2.0"
+license = "MIT"
 
 [[mods]]
 modId = "cobbleride"

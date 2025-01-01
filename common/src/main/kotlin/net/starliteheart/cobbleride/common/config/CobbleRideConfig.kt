@@ -90,6 +90,9 @@ class CobbleRideConfig {
 
         @SerializedName("exhaustionSpeed")
         var exhaustionSpeed: Double = ConfigConstants.Sprinting.Exhaust.VALUE
+
+        @SerializedName("exhaustionDuration")
+        var exhaustionDuration: Double = ConfigConstants.Sprinting.Exhaust.DURATION
     }
 
     companion object {
@@ -141,6 +144,10 @@ class CobbleRideConfig {
                 recoveryDelay =
                     recoveryDelay.coerceIn(ConfigConstants.Sprinting.Delay.MIN, ConfigConstants.Sprinting.Delay.MAX)
                 exhaustionSpeed = exhaustionSpeed.coerceIn(
+                    ConfigConstants.Sprinting.Exhaust.MIN,
+                    ConfigConstants.Sprinting.Exhaust.MAX
+                )
+                exhaustionDuration = exhaustionDuration.coerceIn(
                     ConfigConstants.Sprinting.Exhaust.MIN,
                     ConfigConstants.Sprinting.Exhaust.MAX
                 )

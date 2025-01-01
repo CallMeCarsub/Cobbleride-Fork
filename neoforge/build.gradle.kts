@@ -23,13 +23,17 @@ repositories {
 dependencies {
     minecraft("net.minecraft:minecraft:${rootProject.property("minecraft_version")}")
     mappings(loom.officialMojangMappings())
-    neoForge("net.neoforged:neoforge:${rootProject.property("neoforge_version")}")
-
-    implementation(project(":common", configuration = "namedElements"))
+    implementation(project(":common", configuration = "namedElements")) {
+        isTransitive = false
+    }
     "developmentNeoForge"(project(":common", configuration = "namedElements")) {
         isTransitive = false
     }
-    shadowBundle(project(":common", configuration = "transformProductionNeoForge"))
+    shadowBundle(project(":common", configuration = "transformProductionNeoForge")) {
+        isTransitive = false
+    }
+
+    neoForge("net.neoforged:neoforge:${rootProject.property("neoforge_version")}")
 
     modImplementation("com.cobblemon:neoforge:${rootProject.property("cobblemon_version")}")
     //Needed for cobblemon

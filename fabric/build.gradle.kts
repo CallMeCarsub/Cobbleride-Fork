@@ -17,16 +17,19 @@ val shadowBundle = configurations.create("shadowBundle")
 dependencies {
     minecraft("net.minecraft:minecraft:${rootProject.property("minecraft_version")}")
     mappings(loom.officialMojangMappings())
+    implementation(project(":common", configuration = "namedElements")) {
+        isTransitive = false
+    }
+    "developmentFabric"(project(":common", configuration = "namedElements")) {
+        isTransitive = false
+    }
+    shadowBundle(project(":common", configuration = "transformProductionFabric")) {
+        isTransitive = false
+    }
 
     modImplementation("net.fabricmc:fabric-loader:${rootProject.property("fabric_loader_version")}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.property("fabric_api_version")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${rootProject.property("fabric_lang_kotl_version")}")
-
-    implementation(project(":common", configuration = "namedElements"))
-    "developmentFabric"(project(":common", configuration = "namedElements")) {
-        isTransitive = false
-    }
-    shadowBundle(project(":common", configuration = "transformProductionFabric"))
 
     modImplementation("com.cobblemon:fabric:${rootProject.property("cobblemon_version")}")
 

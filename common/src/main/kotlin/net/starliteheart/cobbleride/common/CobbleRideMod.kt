@@ -1,11 +1,13 @@
 package net.starliteheart.cobbleride.common
 
 import com.cobblemon.mod.common.data.CobblemonDataProvider
+import com.cobblemon.mod.common.platform.events.PlatformEvents
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import net.starliteheart.cobbleride.common.api.pokemon.RideablePokemonSpecies
 import net.starliteheart.cobbleride.common.config.CobbleRideConfig
+import net.starliteheart.cobbleride.common.entity.pokemon.RideablePokemonEntity
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.File
@@ -19,6 +21,16 @@ object CobbleRideMod {
 
     fun initialize() {
         CobblemonDataProvider.register(RideablePokemonSpecies)
+        PlatformEvents.CHANGE_DIMENSION.subscribe {
+            if (it.player.vehicle is RideablePokemonEntity) {
+                it.player.removeVehicle()
+            }
+        }
+        PlatformEvents.SERVER_PLAYER_LOGOUT.subscribe {
+            if (it.player.vehicle is RideablePokemonEntity) {
+                it.player.removeVehicle()
+            }
+        }
         loadConfig()
     }
 

@@ -2,13 +2,11 @@ package net.starliteheart.cobbleride.fabric.client;
 
 import kotlin.Unit;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.starliteheart.cobbleride.common.client.CobbleRideClient;
 import net.starliteheart.cobbleride.common.client.gui.RideStaminaOverlay;
 import net.starliteheart.cobbleride.common.client.keybind.CobbleRideKeyBinds;
-import net.starliteheart.cobbleride.common.entity.pokemon.RideablePokemonEntity;
-import net.starliteheart.cobbleride.common.net.messages.server.pokemon.sync.GetRidePokemonPassengersPacket;
 
 public final class CobbleRideModFabricClient implements ClientModInitializer {
     @Override
@@ -24,10 +22,6 @@ public final class CobbleRideModFabricClient implements ClientModInitializer {
             RideStaminaOverlay.render(matrixStack);
         });
 
-        ClientEntityEvents.ENTITY_LOAD.register((entity, world) -> {
-            if (entity instanceof RideablePokemonEntity pokemon) {
-                new GetRidePokemonPassengersPacket(pokemon.getId()).sendToServer();
-            }
-        });
+        CobbleRideClient.INSTANCE.initialize();
     }
 }
