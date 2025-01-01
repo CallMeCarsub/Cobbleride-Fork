@@ -4,13 +4,9 @@ import com.cobblemon.mod.common.client.gui.pc.PCGUI;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
 import net.starliteheart.cobbleride.common.api.pokemon.RideablePokemonSpecies;
 import net.starliteheart.cobbleride.common.pokemon.RideableSpecies;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -19,26 +15,7 @@ import static net.starliteheart.cobbleride.common.client.CobbleRideClientUtilsKt
 import static net.starliteheart.cobbleride.common.util.CobbleRideUtilsKt.rideableResource;
 
 @Mixin(value = PCGUI.class, remap = false)
-public abstract class PCGUIMixin extends Screen {
-    protected PCGUIMixin(Component arg) {
-        super(arg);
-    }
-
-    @Shadow
-    private Pokemon previewPokemon;
-
-    @Final
-    @Shadow
-    public static int BASE_WIDTH;
-
-    @Final
-    @Shadow
-    public static int BASE_HEIGHT;
-
-    @Final
-    @Shadow
-    public static float SCALE;
-
+public abstract class PCGUIMixin {
     @Inject(
             method = "render", at = @At(
             value = "INVOKE",
@@ -46,21 +23,25 @@ public abstract class PCGUIMixin extends Screen {
     )
     )
     public void displayRideIcon(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        int x = (width - BASE_WIDTH) / 2;
-        int y = (height - BASE_HEIGHT) / 2;
+        PCGUI pcgui = ((PCGUI) (Object) this);
+        int x = (pcgui.width - PCGUI.BASE_WIDTH) / 2;
+        int y = (pcgui.height - PCGUI.BASE_HEIGHT) / 2;
         PoseStack matrices = context.pose();
 
-        if (previewPokemon != null) {
-            RideableSpecies species = RideablePokemonSpecies.INSTANCE.getByName(previewPokemon.getSpecies().showdownId());
-            if (species != null) blitRideIcon(
-                    matrices,
-                    rideableResource("textures/gui/summary/ride-icon.png"),
-                    (x + 56) / SCALE,
-                    (y + 95.5) / SCALE,
-                    32,
-                    16,
-                    SCALE
-            );
+        Pokemon pokemon = pcgui.getPreviewPokemon$common();
+        if (pcgui.getPreviewPokemon$common() != null) {
+            RideableSpecies species = RideablePokemonSpecies.INSTANCE.getByName(pokemon.getSpecies().showdownId());
+            if (species != null && species.getForm(pokemon.getForm().getName()).getEnabled()) {
+                blitRideIcon(
+                        matrices,
+                        rideableResource("textures/gui/summary/ride-icon.png"),
+                        (x + 56) / PCGUI.SCALE,
+                        (y + 95.5) / PCGUI.SCALE,
+                        32,
+                        16,
+                        PCGUI.SCALE
+                );
+            }
         }
     }
 }

@@ -57,6 +57,7 @@
 | Property           | Description                                                                                                                    | Default     |
 |--------------------|--------------------------------------------------------------------------------------------------------------------------------|-------------|
 | name               | The name of the Pokemon. Required in form objects to define the form to align the data to.                                     | "Normal"    |
+| enabled            | Enables whether this Pokemon can be ridden.                                                                                    | true        |
 | offsets            | A map of vectors, defining passenger attachment point offsets for the rider. See below for valid offset names.                 | { 0, 0, 0 } |
 | shouldRiderSit     | Enables whether the rider should be sitting or standing/walking while riding.                                                  | true        |
 | baseSpeedModifier  | Multiplies the speed of this Pokemon across all mediums.                                                                       | 1.0         |

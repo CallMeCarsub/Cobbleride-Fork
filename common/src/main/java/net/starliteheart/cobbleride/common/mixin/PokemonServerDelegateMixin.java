@@ -9,15 +9,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.starliteheart.cobbleride.common.entity.pokemon.RideablePokemonEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(value = PokemonServerDelegate.class, remap = false)
+@Mixin(value = PokemonServerDelegate.class)
 public abstract class PokemonServerDelegateMixin<T> {
-    @Shadow
-    public PokemonEntity entity;
-
     @SuppressWarnings("unchecked")
     @Redirect(
             method = "updateTrackedValues", at = @At(
@@ -26,7 +22,7 @@ public abstract class PokemonServerDelegateMixin<T> {
     )
     )
     public void setIfRideableIsMoving(SynchedEntityData instance, EntityDataAccessor<T> arg, T object) {
-        if (arg.equals(PokemonEntity.Companion.getMOVING()) && entity instanceof RideablePokemonEntity rideable && rideable.getControllingPassenger() != null && rideable.getControllingPassenger() instanceof Player player) {
+        if (arg.equals(PokemonEntity.Companion.getMOVING()) && ((PokemonServerDelegate) (Object) this).entity instanceof RideablePokemonEntity rideable && rideable.getControllingPassenger() != null && rideable.getControllingPassenger() instanceof Player player) {
             float x = player.xxa * 0.5f;
             float z = player.zza;
             if (z <= 0.0f) {

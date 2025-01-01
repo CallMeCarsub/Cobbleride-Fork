@@ -97,7 +97,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         }
 
     private fun isRideable(player: Player): Boolean =
-        rideData != null && (canBeControlledBy(player) || !this.isBattling)
+        rideData != null && rideData!!.enabled && (canBeControlledBy(player) || !this.isBattling)
 
     override fun isImmobile(): Boolean =
         pokemon.status?.status == Statuses.SLEEP || super.isImmobile()
@@ -397,11 +397,6 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
     }
 
     override fun getRiddenInput(player: Player, v: Vec3): Vec3 {
-//        val yya = if (isEyeInFluid(FluidTags.WATER) && moveBehaviour.swim.canSwimInWater) {
-//            0.2f
-//        } else {
-//            0f
-//        }
         if (isImmobile) {
             return Vec3.ZERO
         }
@@ -411,7 +406,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         if (zza <= 0.0f) {
             zza *= 0.25f
         }
-        var yya = 0F;
+        var yya = 0F
 
         if ((isInWater && isAbleToDive()) || isInLava || isFlying()) {
             val verticalSpeed = (
@@ -430,19 +425,6 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
 
         return Vec3(xxa.toDouble(), yya.toDouble(), zza.toDouble())
     }
-
-//    override fun getFluidFallingAdjustedMovement(d: Double, bl: Boolean, vec3: Vec3): Vec3 {
-//        val vec = super.getFluidFallingAdjustedMovement(d, bl, vec3)
-//        if (tickCount % 20 == 0) {
-//            println("vec3: $vec3")
-//            println("vec1: $vec")
-//        }
-//        return if (isVehicle && isAbleToDive() && getIsSubmerged() && abs(vec.y) <= 0.02) {
-//            Vec3(vec.x, 0.2, vec.z)
-//        } else {
-//            vec
-//        }
-//    }
 
     override fun getRiddenSpeed(player: Player): Float {
         val speedModifier = if (config.speedStat.affectsSpeed) {

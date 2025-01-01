@@ -11,6 +11,7 @@ import java.util.*
 
 class RideableSpecies : ClientDataSynchronizer<RideableSpecies>, ShowdownIdentifiable {
     var name: String = "Bulbasaur"
+    var enabled: Boolean = true
     var offsets: EnumMap<RiderOffsetType, Vec3> = EnumMap(RiderOffsetType::class.java)
     var shouldRiderSit: Boolean = true
     var baseSpeedModifier: Float = 1.0F
@@ -23,6 +24,7 @@ class RideableSpecies : ClientDataSynchronizer<RideableSpecies>, ShowdownIdentif
     private val standardForm by lazy {
         RideableFormData(
             "Normal",
+            enabled,
             offsets,
             shouldRiderSit,
             baseSpeedModifier,
@@ -47,6 +49,7 @@ class RideableSpecies : ClientDataSynchronizer<RideableSpecies>, ShowdownIdentif
     override fun encode(buffer: RegistryFriendlyByteBuf) {
         buffer.writeIdentifier(this.identifier)
         buffer.writeString(this.name)
+        buffer.writeBoolean(this.enabled)
         buffer.writeMap(this.offsets, { _, k -> buffer.writeEnumConstant(k) }, { _, v -> buffer.writeVec3(v) })
         buffer.writeBoolean(this.shouldRiderSit)
         buffer.writeFloat(this.baseSpeedModifier)
@@ -59,6 +62,7 @@ class RideableSpecies : ClientDataSynchronizer<RideableSpecies>, ShowdownIdentif
     override fun decode(buffer: RegistryFriendlyByteBuf) {
         this.identifier = buffer.readIdentifier()
         this.name = buffer.readString()
+        this.enabled = buffer.readBoolean()
         this.offsets.clear()
         this.offsets += buffer.readMap(
             { _ -> buffer.readEnumConstant(RiderOffsetType::class.java) },
@@ -78,6 +82,7 @@ class RideableSpecies : ClientDataSynchronizer<RideableSpecies>, ShowdownIdentif
             return false
         return other.showdownId() != this.showdownId()
                 || other.name != this.name
+                || other.enabled != this.enabled
                 || other.offsets != this.offsets
                 || other.shouldRiderSit != this.shouldRiderSit
                 || other.baseSpeedModifier != this.baseSpeedModifier

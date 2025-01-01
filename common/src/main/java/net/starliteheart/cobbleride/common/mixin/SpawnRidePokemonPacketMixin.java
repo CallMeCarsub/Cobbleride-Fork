@@ -6,21 +6,14 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.PacketUtils;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import net.starliteheart.cobbleride.common.entity.pokemon.RideablePokemonEntity;
+import net.starliteheart.cobbleride.common.mixin.accessor.SpawnExtraDataEntityPacketAccessor;
 import net.starliteheart.cobbleride.common.net.messages.client.spawn.SpawnRidePokemonPacket;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(value = SpawnRidePokemonPacket.class, remap = false)
+@Mixin(value = SpawnRidePokemonPacket.class)
 public abstract class SpawnRidePokemonPacketMixin extends SpawnExtraDataEntityPacketMixin {
-    @Shadow
-    public abstract boolean checkType(Entity entity);
-
-    @Shadow
-    public abstract void applyData(RideablePokemonEntity entity);
-
     @Override
     public void replaceEntityDefinition(Minecraft client, Runnable runnable) {
         client.execute(() -> {
@@ -30,7 +23,7 @@ public abstract class SpawnRidePokemonPacketMixin extends SpawnExtraDataEntityPa
             ClientLevel world = (ClientLevel) player.level();
             if (world == null) return;
 
-            ClientboundAddEntityPacket vanillaSpawnPacket = cobbleride$getVSP();
+            ClientboundAddEntityPacket vanillaSpawnPacket = ((SpawnExtraDataEntityPacketAccessor) this).getVanillaSpawnPacket();
             if (vanillaSpawnPacket == null) return;
 
             // This is a copy pasta of ClientPlayNetworkHandler#onEntitySpawn
@@ -47,8 +40,8 @@ public abstract class SpawnRidePokemonPacketMixin extends SpawnExtraDataEntityPa
             ));
 
             // Cobblemon start
-            if (this.checkType(entity)) {
-                this.applyData(entity);
+            if (((SpawnRidePokemonPacket) (Object) this).checkType(entity)) {
+                ((SpawnRidePokemonPacket) (Object) this).applyData(entity);
             }
             // Cobblemon end
 
