@@ -13,7 +13,7 @@ Ride astride your Pokemon companions, as you travel by land, air or sea together
 '''
 
 [[mixins]]
-config = "cobbleride.mixins.json"
+config = "cobbleride-common.mixins.json"
 
 [[dependencies.cobbleride]]
 modId = "minecraft"

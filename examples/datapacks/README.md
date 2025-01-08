@@ -1,4 +1,4 @@
-### Template for Adding New Ride Pokemon
+### Templates for Adding New Ride Pokemon
 
 This folder contains examples as templates for creating datapacks for this mod! All you need to do is:
 1. Duplicate the folder for the datapack template you want.

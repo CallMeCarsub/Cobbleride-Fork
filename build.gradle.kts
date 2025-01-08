@@ -14,7 +14,13 @@ architectury {
 
 allprojects {
     group = "${rootProject.property("maven_group")}"
-    version = "${rootProject.property("mod_version")}"
+    version = "${rootProject.property("mod_version")}+${rootProject.property("minecraft_version")}${
+        if (rootProject.property("is_snapshot") == "true") {
+            "-SNAPSHOT"
+        } else {
+            ""
+        }
+    }"
 }
 
 subprojects {

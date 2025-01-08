@@ -23,8 +23,8 @@
     ]
   },
   "mixins": [
-    "cobbleride.mixins.json",
-    "fabric.cobbleride.mixins.json"
+    "cobbleride-common.mixins.json",
+    "cobbleride-fabric.mixins.json"
   ],
   "depends": {
     "java": ">=21",
