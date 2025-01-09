@@ -8,6 +8,9 @@ class CobbleRideConfig {
     @SerializedName("general")
     var general: General = General()
 
+    @SerializedName("permissions")
+    var permissions: Permissions = Permissions()
+
     @SerializedName("speedStat")
     var speedStat: SpeedStat = SpeedStat()
 
@@ -44,6 +47,14 @@ class CobbleRideConfig {
 
         @SerializedName("canDismountInMidair")
         var canDismountInMidair: Boolean = ConfigConstants.Feature.CAN_DISMOUNT_IN_MIDAIR
+
+        @SerializedName("useCameraNavigation")
+        var useCameraNavigation: Boolean = ConfigConstants.Feature.USE_CAMERA_NAVIGATION
+    }
+
+    inner class Permissions {
+        @SerializedName("blacklistedDimensions")
+        var blacklistedDimensions: List<String> = listOf()
     }
 
     inner class SpeedStat {
@@ -69,6 +80,9 @@ class CobbleRideConfig {
 
         @SerializedName("rideSprintSpeed")
         var rideSprintSpeed: Double = ConfigConstants.Sprinting.Speed.VALUE
+
+        @SerializedName("canSprintOnLand")
+        var canSprintOnLand: Boolean = ConfigConstants.Sprinting.ON_LAND
 
         @SerializedName("canSprintInWater")
         var canSprintInWater: Boolean = ConfigConstants.Sprinting.IN_WATER

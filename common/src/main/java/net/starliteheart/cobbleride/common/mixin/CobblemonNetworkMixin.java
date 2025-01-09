@@ -2,16 +2,14 @@ package net.starliteheart.cobbleride.common.mixin;
 
 import com.cobblemon.mod.common.CobblemonNetwork;
 import com.cobblemon.mod.common.client.net.data.DataRegistrySyncPacketHandler;
-import com.cobblemon.mod.common.client.net.pokemon.update.PokemonUpdatePacketHandler;
 import com.cobblemon.mod.common.net.PacketRegisterInfo;
 import net.starliteheart.cobbleride.common.client.net.spawn.SpawnRidePokemonHandler;
 import net.starliteheart.cobbleride.common.net.messages.client.data.RideableSpeciesRegistrySyncPacket;
-import net.starliteheart.cobbleride.common.net.messages.client.pokemon.update.RidePokemonStateUpdatePacket;
 import net.starliteheart.cobbleride.common.net.messages.client.spawn.SpawnRidePokemonPacket;
 import net.starliteheart.cobbleride.common.net.messages.server.pokemon.sync.GetRidePokemonPassengersPacket;
-import net.starliteheart.cobbleride.common.net.messages.server.pokemon.update.SetRidePokemonStatePacket;
+import net.starliteheart.cobbleride.common.net.messages.server.pokemon.update.SetRidePokemonExhaustPacket;
 import net.starliteheart.cobbleride.common.net.serverhandling.pokemon.sync.GetRidePokemonPassengersHandler;
-import net.starliteheart.cobbleride.common.net.serverhandling.pokemon.update.SetRidePokemonStateHandler;
+import net.starliteheart.cobbleride.common.net.serverhandling.pokemon.update.SetRidePokemonExhaustHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,11 +19,13 @@ import java.util.List;
 
 @Mixin(value = CobblemonNetwork.class, remap = false)
 public abstract class CobblemonNetworkMixin {
+    /*
+        These injects add the packets required for the Ride Pokemon to function correctly. To consider, maybe these packets should be moved to a custom, personalized network manager made for the mod itself, so that it doesn't have to rely as strongly on the core Cobblemon network. (It might also allow for optional packet handling, if a client-optional approach is actually viable.)
+     */
     @Inject(method = "generateS2CPacketInfoList", at = @At(value = "RETURN"), cancellable = true)
     public void addRideableS2CPacketHandlers(CallbackInfoReturnable<List<PacketRegisterInfo<?>>> cir) {
         List<PacketRegisterInfo<?>> list = cir.getReturnValue();
         list.add(new PacketRegisterInfo<>(SpawnRidePokemonPacket.Companion.getID(), SpawnRidePokemonPacket.Companion::decode, new SpawnRidePokemonHandler(), null));
-        list.add(new PacketRegisterInfo<>(RidePokemonStateUpdatePacket.Companion.getID(), RidePokemonStateUpdatePacket.Companion::decode, new PokemonUpdatePacketHandler<>(), null));
         list.add(new PacketRegisterInfo<>(RideableSpeciesRegistrySyncPacket.Companion.getID(), RideableSpeciesRegistrySyncPacket.Companion::decode, new DataRegistrySyncPacketHandler<>(), null));
         cir.setReturnValue(list);
     }
@@ -33,7 +33,7 @@ public abstract class CobblemonNetworkMixin {
     @Inject(method = "generateC2SPacketInfoList", at = @At(value = "RETURN"), cancellable = true)
     public void addRideableC2SPacketHandlers(CallbackInfoReturnable<List<PacketRegisterInfo<?>>> cir) {
         List<PacketRegisterInfo<?>> list = cir.getReturnValue();
-        list.add(new PacketRegisterInfo<>(SetRidePokemonStatePacket.Companion.getID(), SetRidePokemonStatePacket.Companion::decode, new SetRidePokemonStateHandler(), null));
+        list.add(new PacketRegisterInfo<>(SetRidePokemonExhaustPacket.Companion.getID(), SetRidePokemonExhaustPacket.Companion::decode, new SetRidePokemonExhaustHandler(), null));
         list.add(new PacketRegisterInfo<>(GetRidePokemonPassengersPacket.Companion.getID(), GetRidePokemonPassengersPacket.Companion::decode, new GetRidePokemonPassengersHandler(), null));
         cir.setReturnValue(list);
     }

@@ -3,7 +3,7 @@ package net.starliteheart.cobbleride.common.config
 object ConfigConstants {
     object Speed {
         const val DEFAULT: Double = 1.0
-        const val UNDERWATER: Double = 2.0
+        const val UNDERWATER: Double = 1.0
         const val MIN: Double = 0.0
         const val MAX: Double = 5.0
     }
@@ -24,6 +24,7 @@ object ConfigConstants {
     object Feature {
         const val IS_WATER_BREATHING_SHARED: Boolean = true
         const val CAN_DISMOUNT_IN_MIDAIR: Boolean = false
+        const val USE_CAMERA_NAVIGATION: Boolean = false
     }
 
     object SpeedStat {
@@ -46,6 +47,7 @@ object ConfigConstants {
 
     object Sprinting {
         const val ACTIVE: Boolean = true
+        const val ON_LAND: Boolean = true
         const val IN_WATER: Boolean = true
         const val IN_AIR: Boolean = false
 

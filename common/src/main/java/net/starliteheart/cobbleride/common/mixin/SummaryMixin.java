@@ -17,6 +17,9 @@ import static net.starliteheart.cobbleride.common.util.CobbleRideUtilsKt.rideabl
 
 @Mixin(value = Summary.class)
 public abstract class SummaryMixin {
+    /*
+        This inject makes sure that Ride Pokemon have a neat little icon in the summary screens to show that you can ride them!
+     */
     @Inject(
             method = "render", at = @At(
             value = "INVOKE",

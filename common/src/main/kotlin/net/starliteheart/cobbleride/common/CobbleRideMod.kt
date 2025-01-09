@@ -34,6 +34,9 @@ object CobbleRideMod {
         loadConfig()
     }
 
+    /*
+        Chasem, who made CobblemonExtras, was nice enough to let me copy and modify their config loading and saving code. Be sure to support them!
+     */
     private fun loadConfig() {
         val configFileLoc =
             System.getProperty("user.dir") + File.separator + "config" + File.separator + MOD_ID + File.separator + "config.json"
@@ -45,8 +48,6 @@ object CobbleRideMod {
         if (configFile.exists()) {
             try {
                 val fileReader = FileReader(configFile)
-//                var loadedConfig = CobbleRideConfig.GSON.fromJson(fileReader, CobbleRideConfig::class.java)
-
 
                 // Create a default config instance
                 val defaultConfig = CobbleRideConfig()

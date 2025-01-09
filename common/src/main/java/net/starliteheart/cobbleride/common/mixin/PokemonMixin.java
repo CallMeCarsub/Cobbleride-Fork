@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(value = Pokemon.class, remap = false)
 public abstract class PokemonMixin {
+    /*
+        All owned Pokemon could possibly be Ride Pokemon (unless owned by an NPC), so we replace the entity type here.
+     */
     @Redirect(
             method = "sendOut",
             at = @At(value = "NEW", target = "com/cobblemon/mod/common/entity/pokemon/PokemonEntity")

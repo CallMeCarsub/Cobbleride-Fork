@@ -10,6 +10,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = Entity.class)
 public class EntityMixin {
+    /*
+        A dismount handler for ensuring that any attempts to dismount in midair are blocked if the feature is enabled.
+     */
     @Inject(method = "removeVehicle", at = @At(value = "HEAD"), cancellable = true)
     private void addDismountHandler(CallbackInfo ci) {
         if (((Entity) (Object) this).getVehicle() instanceof RideablePokemonEntity pokemon && pokemon.isAlive()) {

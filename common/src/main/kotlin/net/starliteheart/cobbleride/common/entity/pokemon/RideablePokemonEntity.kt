@@ -2,14 +2,16 @@ package net.starliteheart.cobbleride.common.entity.pokemon
 
 import com.bedrockk.molang.runtime.MoLangRuntime
 import com.cobblemon.mod.common.api.pokemon.status.Statuses
-import com.cobblemon.mod.common.api.reactive.SimpleObservable
+import com.cobblemon.mod.common.api.tags.CobblemonItemTags
 import com.cobblemon.mod.common.entity.PlatformType
 import com.cobblemon.mod.common.entity.PoseType
+import com.cobblemon.mod.common.entity.npc.NPCEntity
 import com.cobblemon.mod.common.entity.pokemon.PokemonBehaviourFlag
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
 import com.cobblemon.mod.common.pokemon.Pokemon
 import com.cobblemon.mod.common.util.DataKeys
 import com.cobblemon.mod.common.util.getIsSubmerged
+import com.cobblemon.mod.common.util.math.geometry.toRadians
 import com.cobblemon.mod.common.util.resolveFloat
 import com.google.common.collect.UnmodifiableIterator
 import net.minecraft.core.BlockPos.MutableBlockPos
@@ -20,7 +22,6 @@ import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
 import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.server.level.ServerEntity
-import net.minecraft.server.level.ServerPlayer
 import net.minecraft.tags.FluidTags
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
@@ -38,10 +39,10 @@ import net.minecraft.world.phys.Vec3
 import net.starliteheart.cobbleride.common.CobbleRideMod
 import net.starliteheart.cobbleride.common.api.pokemon.RideablePokemonSpecies
 import net.starliteheart.cobbleride.common.config.CobbleRideConfig
-import net.starliteheart.cobbleride.common.net.messages.RideState
+import net.starliteheart.cobbleride.common.mixin.accessor.LivingEntityAccessor
 import net.starliteheart.cobbleride.common.net.messages.client.pokemon.ai.ClientMoveBehaviour
-import net.starliteheart.cobbleride.common.net.messages.client.pokemon.update.RidePokemonStateUpdatePacket
 import net.starliteheart.cobbleride.common.net.messages.client.spawn.SpawnRidePokemonPacket
+import net.starliteheart.cobbleride.common.net.messages.server.pokemon.update.SetRidePokemonExhaustPacket
 import net.starliteheart.cobbleride.common.pokemon.RideableFormData
 import net.starliteheart.cobbleride.common.pokemon.RiderOffsetType
 import net.starliteheart.cobbleride.common.pokemon.RiderOffsetType.*
@@ -72,32 +73,31 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
     private var shouldSinkInWater = false
     private var sprintCooldownScale = 0F
     var sprintStaminaScale = 0F
+
     val canSprint: Boolean
         get() = config.sprinting.canSprint
     val canExhaust: Boolean
         get() = config.sprinting.canExhaust
-    var isExhausted = false
-
-    var isRideAscending: Boolean = false
+    var isExhausted: Boolean = false
         set(value) {
-            field = value
-            this._isRideAscending.emit(value)
+            if (field != value) {
+                field = value
+                if (level().isClientSide) SetRidePokemonExhaustPacket(this.id, value).sendToServer()
+            }
         }
 
+    val isRideAscending: Boolean
+        get() = controllingPassenger != null && (controllingPassenger as LivingEntityAccessor).jumping
     var isRideDescending: Boolean = false
-        set(value) {
-            field = value
-            this._isRideDescending.emit(value)
-        }
-
     var isRideSprinting: Boolean = false
-        set(value) {
-            field = value
-            this._isRideSprinting.emit(value)
-        }
 
-    private fun isRideable(player: Player): Boolean =
+    private fun canBeRiddenBy(player: Player): Boolean =
         rideData != null && rideData!!.enabled && (canBeControlledBy(player) || !this.isBattling)
+                && this.owner !is NPCEntity && isAllowedDimension()
+
+    private fun isAllowedDimension() = !config.permissions.blacklistedDimensions.contains(
+        level().dimension().location().toString()
+    )
 
     override fun isImmobile(): Boolean =
         pokemon.status?.status == Statuses.SLEEP || super.isImmobile()
@@ -252,21 +252,25 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
     }
 
     override fun mobInteract(player: Player, hand: InteractionHand): InteractionResult {
-        val itemStack = player.getItemInHand(hand)
-        if (player is ServerPlayer && !player.isShiftKeyDown
-            && hand == InteractionHand.MAIN_HAND && itemStack.isEmpty
-        ) {
-            if (!this.isVehicle && this.isRideable(player)) {
-                this.doPlayerRide(player)
-                return InteractionResult.sidedSuccess(level().isClientSide)
-            } else if (this.isVehicle && this.isOwnedBy(player)
-                && this.passengers.none { it.uuid == player.uuid }
+        val result = super.mobInteract(player, hand)
+        if (result == InteractionResult.PASS) {
+            val itemStack = player.getItemInHand(hand)
+            if (!player.isShiftKeyDown
+                && hand == InteractionHand.MAIN_HAND && !itemStack.`is`(CobblemonItemTags.POKEDEX)
             ) {
-                this.ejectPassengers()
-                return InteractionResult.sidedSuccess(level().isClientSide)
+                if (!this.isVehicle && this.canBeRiddenBy(player)) {
+                    this.doPlayerRide(player)
+                    return InteractionResult.sidedSuccess(level().isClientSide)
+                } else if (this.isVehicle && this.isOwnedBy(player)
+                    && this.passengers.none { it.uuid == player.uuid }
+                ) {
+                    if (!level().isClientSide)
+                        this.ejectPassengers()
+                    return InteractionResult.sidedSuccess(level().isClientSide)
+                }
             }
         }
-        return super.mobInteract(player, hand)
+        return result
     }
 
     fun shouldRiderSit(): Boolean = rideData?.shouldRiderSit ?: true
@@ -287,59 +291,55 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
             player.calculateEntityAnimation(false)
         }
 
-        // Carry over logic from PokemonMoveControl, where non-diving Pokemon that can swim will tread water
-        if ((this.isInLava && !moveBehaviour.swim.canBreatheUnderlava) ||
-            (((moveBehaviour.swim.canSwimInWater && !moveBehaviour.swim.canBreatheUnderwater) ||
-                    (isAbleToDive() && isOnWaterSurface() && !isRideDescending))
-                    && this.isInWater && this.getFluidHeight(
-                FluidTags.WATER
-            ) > this.fluidJumpThreshold)
-        ) {
-            if (this.random.nextFloat() < 0.8f) {
-                this.jumpControl.jump()
-            }
-        }
-
         // If shared water breathing is allowed, check mount and apply if it has the effect
         if (moveBehaviour.swim.canBreatheUnderwater && config.general.isWaterBreathingShared) {
             player.addEffect(MobEffectInstance(MobEffects.WATER_BREATHING, 60, 0, false, false, false))
         }
 
-        // If the Pokemon is flying and can land, land
+        if (this.isControlledByLocalInstance) {
+            // Carry over logic from PokemonMoveControl, where Pokemon that can swim will tread water
+            if ((this.isInLava && !moveBehaviour.swim.canBreatheUnderlava) ||
+                (((moveBehaviour.swim.canSwimInWater && !moveBehaviour.swim.canBreatheUnderwater) ||
+                        (isAbleToDive() && isOnWaterSurface() && !isRideDescending))
+                        && this.isInWater && this.getFluidHeight(
+                    FluidTags.WATER
+                ) > this.fluidJumpThreshold)
+            ) {
+                if (this.random.nextFloat() < 0.8f) {
+                    this.jumpControl.jump()
+                }
+            }
+
+            // When descending, disable water walking for diving Pokemon
+            shouldSinkInWater = isAbleToDive() && (isRideDescending || (isOnWaterSurface() && this.getFluidHeight(
+                FluidTags.WATER
+            ) > this.fluidJumpThreshold))
+
+            // Sprint control logic
+            val shouldBeSprinting = canSprint && (isInWater || isFlying() || config.sprinting.canSprintOnLand)
+                    && (!isInWater || config.sprinting.canSprintInWater) && (!isFlying() || config.sprinting.canSprintInAir)
+                    && isRideSprinting && vec3.horizontalDistance() > 0 && !isExhausted && sprintStaminaScale > 0F
+            if (shouldBeSprinting) {
+                sprintCooldownScale = 0F
+                if (canExhaust) {
+                    sprintStaminaScale = max(sprintStaminaScale - (1F / config.sprinting.maxStamina), 0F)
+                    if (sprintStaminaScale == 0F)
+                        isExhausted = true
+                }
+            }
+            this.isSprinting = shouldBeSprinting
+            // Sets player POV, a bit dirty but it will work for now until the inevitable bugs (possibly unintended hunger drain?)
+            player.isSprinting = shouldBeSprinting
+        }
+
+        // If the Pokemon is flying and can land, clear the flying state
         if (this.isFlying() && (this.onGround() || isInWater) && this.couldStopFlying()) {
             this.setBehaviourFlag(PokemonBehaviourFlag.FLYING, false)
         }
 
-        // When descending, disable water walking for diving Pokemon
-        shouldSinkInWater = isAbleToDive() && (isRideDescending || (isOnWaterSurface() && this.getFluidHeight(
-            FluidTags.WATER
-        ) > this.fluidJumpThreshold))
-
-        // When ascending, ensure water walking stays disabled if applicable, or start flying
+        // Set flying state if we should be flying
         if (isRideAscending && moveBehaviour.fly.canFly && !this.isFlying() && !getIsSubmerged()) {
             this.setBehaviourFlag(PokemonBehaviourFlag.FLYING, true)
-        }
-
-        // Sprint control logic
-        if (canSprint && (!isInWater || config.sprinting.canSprintInWater) && (!isFlying() || config.sprinting.canSprintInAir)
-            && isRideSprinting && vec3.horizontalDistance() > 0 && !isExhausted && sprintStaminaScale > 0F
-        ) {
-            sprintCooldownScale = 0F
-            if (!level().isClientSide) {
-                this.isSprinting = true
-                // This may not be the best way to get an FOV change, but this will suffice until the first bugs inevitably happen
-                player.isSprinting = true
-            }
-            if (canExhaust) {
-                sprintStaminaScale = max(sprintStaminaScale - (1F / config.sprinting.maxStamina), 0F)
-                isExhausted = sprintStaminaScale == 0F
-            }
-        } else {
-            if (!level().isClientSide) {
-                this.isSprinting = false
-                // Be sure to remove FOV change here
-                player.isSprinting = false
-            }
         }
 
         // Activate any jumps that have been queued up this tick
@@ -350,9 +350,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         super.tick()
 
         if (isBattling) {
-            // Deploy a platform if a non-wild Pokemon is touching water but not underwater.
-            // This can't be done in the BattleMovementGoal as the sleep goal will override it.
-            // Clients also don't seem to have correct info about behavior
+            // Copying this from Cobblemon to fix a few bugs related to rafts where they don't get the behaviour on the client
             platform = if (ticksLived > 5
                 && ownerUUID != null
                 && isInWater && !isUnderWater
@@ -375,15 +373,19 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
 
         // Resolve stamina recovery and exhaustion effects
         if (canSprint && canExhaust) {
-            if (!this.isSprinting && sprintStaminaScale < 1F) {
-                if (config.sprinting.recoveryDelay > 0 && sprintCooldownScale < 1F) {
-                    sprintCooldownScale = min(sprintCooldownScale + (1F / config.sprinting.recoveryDelay), 1F)
-                } else {
-                    sprintStaminaScale = min(sprintStaminaScale + (1F / config.sprinting.recoveryTime), 1F)
+            if (level().isClientSide) {
+                if (!this.isSprinting && sprintStaminaScale < 1F) {
+                    if (config.sprinting.recoveryDelay > 0 && sprintCooldownScale < 1F) {
+                        sprintCooldownScale = min(sprintCooldownScale + (1F / config.sprinting.recoveryDelay), 1F)
+                    } else {
+                        sprintStaminaScale = min(sprintStaminaScale + (1F / config.sprinting.recoveryTime), 1F)
+                    }
+                }
+
+                if (!(isExhausted && sprintStaminaScale < config.sprinting.exhaustionDuration)) {
+                    isExhausted = false
                 }
             }
-
-            isExhausted = isExhausted && sprintStaminaScale < config.sprinting.exhaustionDuration
 
             // Emit particles if exhausted, every X ticks
             if (isExhausted && tickCount % 4 == 0) {
@@ -406,8 +408,16 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         if (zza <= 0.0f) {
             zza *= 0.25f
         }
-        var yya = 0F
+        var vec3 = Vec3(xxa.toDouble(), 0.0, zza.toDouble())
 
+        // We rotate the vector here to align with the player's line of view if camera navigation is enabled.
+        if (config.general.useCameraNavigation && vec3.length() > 0) {
+            if ((isInWater && isAbleToDive() && (getIsSubmerged() || isRideDescending)) || isInLava || isFlying()) {
+                vec3 = vec3.xRot((-player.xRot.toRadians()))
+            }
+        }
+
+        // Adjust vertical movement if we're holding a key, regardless of navigation mode
         if ((isInWater && isAbleToDive()) || isInLava || isFlying()) {
             val verticalSpeed = (
                     if (isFlying()) {
@@ -417,13 +427,13 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
                     }
                     ).toFloat()
             if (isRideAscending && !isRideDescending) {
-                yya += verticalSpeed
+                vec3 = vec3.add(0.0, verticalSpeed.toDouble(), 0.0)
             } else if (isRideDescending && !isRideAscending) {
-                yya -= verticalSpeed
+                vec3 = vec3.add(0.0, -verticalSpeed.toDouble(), 0.0)
             }
         }
 
-        return Vec3(xxa.toDouble(), yya.toDouble(), zza.toDouble())
+        return vec3
     }
 
     override fun getRiddenSpeed(player: Player): Float {
@@ -504,28 +514,4 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
                 ClientboundAddEntityPacket(this, entityTrackerEntry)
             )
         ) as Packet<ClientGamePacketListener>
-
-    // State sync observables
-    private val _isRideAscending = pokemon.registerObservable(SimpleObservable<Boolean>()) {
-        RidePokemonStateUpdatePacket(
-            { pokemon },
-            RideState.ASCENDING,
-            it
-        )
-    }
-    private val _isRideDescending = pokemon.registerObservable(SimpleObservable<Boolean>()) {
-        RidePokemonStateUpdatePacket(
-            { pokemon },
-            RideState.DESCENDING,
-            it
-        )
-    }
-    private val _isRideSprinting = pokemon.registerObservable(SimpleObservable<Boolean>()) {
-        RidePokemonStateUpdatePacket(
-            { pokemon },
-            RideState.SPRINTING,
-            it
-        )
-    }
-
 }

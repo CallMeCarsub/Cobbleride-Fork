@@ -1,5 +1,6 @@
 package net.starliteheart.cobbleride.common.client.gui
 
+import com.cobblemon.mod.common.client.CobblemonClient.pokedexUsageContext
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
@@ -28,6 +29,11 @@ class RideStaminaOverlay : Gui(Minecraft.getInstance()) {
             val ridePokemon = player.vehicle as RideablePokemonEntity
             // Do not render if either sprinting is disabled or exhaustion mechanics are disabled
             if (!ridePokemon.canSprint || !ridePokemon.canExhaust) {
+                return
+            }
+
+            // Do not render if we're using the Pokedex's scanning mode
+            if (pokedexUsageContext.scanningGuiOpen) {
                 return
             }
 

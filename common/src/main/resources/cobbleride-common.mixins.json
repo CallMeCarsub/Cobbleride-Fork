@@ -4,6 +4,8 @@
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "client": [
+    "ClientPacketListenerMixin",
+    "LocalPlayerMixin",
     "PCGUIMixin",
     "PokemonInfoWidgetMixin",
     "SummaryMixin",
@@ -13,9 +15,12 @@
     "CobblemonNetworkMixin",
     "EntityMixin",
     "LivingEntityMixin",
+    "PlayerMixin",
     "PokemonBattleMixin",
     "PokemonMixin",
-    "PokemonServerDelegateMixin"
+    "PokemonServerDelegateMixin",
+    "SendOutPokemonHandlerMixin",
+    "accessor.LivingEntityAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
