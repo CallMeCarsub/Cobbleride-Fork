@@ -27,7 +27,7 @@ public abstract class LocalPlayerMixin {
             method = "aiStep",
             at = @At(value = "TAIL")
     )
-    public void setRidePokemonInputs(CallbackInfo ci) {
+    private void setRidePokemonInputs(CallbackInfo ci) {
         LocalPlayer player = (LocalPlayer) (Object) this;
         if (player.getVehicle() instanceof RideablePokemonEntity pokemon && pokemon.isControlledByLocalInstance()) {
             pokemon.setRideDescending(this.input.shiftKeyDown);

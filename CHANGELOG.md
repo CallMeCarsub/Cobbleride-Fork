@@ -13,17 +13,14 @@
     - Jump to ascend / fly (default Space)
     - Sneak to descend / dive (default LShift)
     - Sprint to... sprint! But with STYLE! (default LCtrl)
-    - Throw Selected Pokemon from Cobblemon to dismount (default R). Kinda like when you want to get a shoulder-mounted
-      Pokemon off your shoulder, only YOU'RE the one on THEIR shoulder!
-- Reduced the number of packets sent between client and server! Which SHOULD mean servers have less data to juggle,
-  which should keep TPS healthy. Haven't had any evidence to suggest that this could be a potential issue, but it never
-  hurts to take some preventative measures!
-- The above change did introduce a conflict, though, since the Throw Selected Pokemon key is also used for battles and
-  interactions. The resulting side effects included being unable to dismount from your Ride Pokemon while involved in a
-  battle. This has been fixed by prioritizing self-dismounting from any actively selected Ride Pokemon. You also
-  prioritize dismounting from someone else's Pokemon. This should hopefully improve user-friendliness for the controls
-  while still allowing you opportunities to ride your Pokemon into battle! (Just make sure it isn't your actively
-  selected Pokemon when you start, it will work.)
+    - Sneak and Throw (from Cobblemon) to dismount (default LShift + R) if your Ride Pokemon is selected. Kinda like
+      when you want to get a shoulder-mounted Pokemon off your shoulder, only YOU'RE the one on THEIR shoulder! Except
+      you also have to sneak, because it makes more sense to require dismounting to be a more explicitly desired action
+      to preserve normal functions on the button otherwise. Note that you also cannot recall your Pokemon unless you are
+      dismounted from it.
+- Reduced the number of packets sent between client and server as a result of the changes above. Which SHOULD mean
+  servers have less data to juggle, which should keep TPS healthy. Haven't had any evidence to suggest that this could
+  be a potential issue, but it never hurts to take some preventative measures!
 - Adjusted Ride Pokemon interaction to now let you mount even while holding an item! This only applies to items that do
   not have some special effect on the Pokemon when used, such as potions or evolution items.
 - Fixed an issue where server configs were not being correctly synced to connecting clients.
@@ -34,7 +31,12 @@
   dimensions, just add their resource locations (e.g. "minecraft:the_nether") to the list to prevent riding in those
   dimensions!
 - Added safety check to make sure you can't mount a Ride Pokemon that belongs to an NPC entity.
-- Set default underwater modifier to 1.0. Underwater Pokemon were a bit TOO fast.
+- Added checks to make sure that Ride Pokemon are not dismounted if swapped out in battle (unless they faint).
+- Added checks to make sure that Ride Pokemon cannot be evolved while mounted, nor can players mount Pokemon while they
+  are evolving.
+- Reduced default underwater modifier from 2.0 to 1.0. Underwater Pokemon were a bit TOO fast.
+- Increased maximum limit for all speed-related modifiers from 5.0 to 100.0. Because some folks WANT to go too fast.
+- Increased maximum limit for ride speed limit from 120.0 to 420.0. Because you'll be blazing at those speeds.
 - Minor adjustments throughout the code, to make things either more readable or a touch more standardized.
 
 ***

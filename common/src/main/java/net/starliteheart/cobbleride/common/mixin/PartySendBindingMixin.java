@@ -35,7 +35,8 @@ public class PartySendBindingMixin {
         if (selectedSlot != -1 && Minecraft.getInstance().screen == null) {
             Pokemon pokemon = CobblemonClient.INSTANCE.getStorage().getMyParty().get(selectedSlot);
             if (
-                    player.getVehicle() instanceof RideablePokemonEntity mount && mount.isAlive()
+                    player.isShiftKeyDown() &&
+                            player.getVehicle() instanceof RideablePokemonEntity mount && mount.isAlive()
                             && (!mount.isOwnedBy(player)
                             || (pokemon != null && mount.is(pokemon.getEntity()))
                     )

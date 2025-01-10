@@ -20,7 +20,7 @@ public abstract class PokemonBattleMixin {
             remap = false,
             cancellable = true
     )
-    public void preventRecalling(CallbackInfo ci) {
+    private void preventRecalling(CallbackInfo ci) {
         ci.cancel();
     }
 }

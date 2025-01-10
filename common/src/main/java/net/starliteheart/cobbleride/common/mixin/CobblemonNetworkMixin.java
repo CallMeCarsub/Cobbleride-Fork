@@ -25,7 +25,7 @@ public abstract class CobblemonNetworkMixin {
      * These injects add the packets required for the Ride Pokemon to function correctly. To consider, maybe these packets should be moved to a custom, personalized network manager made for the mod itself, so that it doesn't have to rely as strongly on the core Cobblemon network. (It might also allow for optional packet handling, if a client-optional approach is actually viable.)
      */
     @Inject(method = "generateS2CPacketInfoList", at = @At(value = "RETURN"), cancellable = true)
-    public void addRideableS2CPacketHandlers(CallbackInfoReturnable<List<PacketRegisterInfo<?>>> cir) {
+    private void addRideableS2CPacketHandlers(CallbackInfoReturnable<List<PacketRegisterInfo<?>>> cir) {
         List<PacketRegisterInfo<?>> list = cir.getReturnValue();
         list.add(new PacketRegisterInfo<>(SendServerSettingsPacket.Companion.getID(), SendServerSettingsPacket.Companion::decode, new SendServerSettingsHandler(), null));
         list.add(new PacketRegisterInfo<>(SpawnRidePokemonPacket.Companion.getID(), SpawnRidePokemonPacket.Companion::decode, new SpawnRidePokemonHandler(), null));
@@ -34,7 +34,7 @@ public abstract class CobblemonNetworkMixin {
     }
 
     @Inject(method = "generateC2SPacketInfoList", at = @At(value = "RETURN"), cancellable = true)
-    public void addRideableC2SPacketHandlers(CallbackInfoReturnable<List<PacketRegisterInfo<?>>> cir) {
+    private void addRideableC2SPacketHandlers(CallbackInfoReturnable<List<PacketRegisterInfo<?>>> cir) {
         List<PacketRegisterInfo<?>> list = cir.getReturnValue();
         list.add(new PacketRegisterInfo<>(SetRidePokemonExhaustPacket.Companion.getID(), SetRidePokemonExhaustPacket.Companion::decode, new SetRidePokemonExhaustHandler(), null));
         list.add(new PacketRegisterInfo<>(GetRidePokemonPassengersPacket.Companion.getID(), GetRidePokemonPassengersPacket.Companion::decode, new GetRidePokemonPassengersHandler(), null));

@@ -21,6 +21,8 @@
     "PokemonMixin",
     "PokemonServerDelegateMixin",
     "SendOutPokemonHandlerMixin",
+    "ServerEvolutionControllerMixin",
+    "SwitchInstructionMixin",
     "accessor.LivingEntityAccessor"
   ],
   "injectors": {

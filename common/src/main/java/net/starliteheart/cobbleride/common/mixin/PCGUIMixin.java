@@ -25,7 +25,7 @@ public abstract class PCGUIMixin {
             target = "Lnet/minecraft/client/gui/screens/Screen;render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"
     )
     )
-    public void displayRideIcon(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void displayRideIcon(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         PCGUI pcgui = ((PCGUI) (Object) this);
         int x = (pcgui.width - PCGUI.BASE_WIDTH) / 2;
         int y = (pcgui.height - PCGUI.BASE_HEIGHT) / 2;

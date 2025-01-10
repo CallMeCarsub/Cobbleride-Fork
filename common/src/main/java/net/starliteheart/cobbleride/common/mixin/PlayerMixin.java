@@ -17,7 +17,7 @@ public abstract class PlayerMixin {
             at = @At(value = "RETURN"),
             cancellable = true
     )
-    public void doNotDismountRidePokemon(CallbackInfoReturnable<Boolean> cir) {
+    private void doNotDismountRidePokemon(CallbackInfoReturnable<Boolean> cir) {
         Player player = (Player) (Object) this;
         cir.setReturnValue(!(player.getVehicle() instanceof RideablePokemonEntity) && cir.getReturnValue());
     }

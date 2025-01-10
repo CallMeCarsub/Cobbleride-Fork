@@ -21,12 +21,13 @@ public abstract class SummaryMixin {
      * This inject makes sure that Ride Pokemon have a neat little icon in the summary screens to show that you can ride them!
      */
     @Inject(
-            method = "render", at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/screens/Screen;render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"
+            method = "render",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/screens/Screen;render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"
+            )
     )
-    )
-    public void displayRideIcon(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void displayRideIcon(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         Summary summary = (Summary) (Object) this;
         final float SCALE = PokedexGUIConstants.SCALE;
         int x = (summary.width - Summary.BASE_WIDTH) / 2;

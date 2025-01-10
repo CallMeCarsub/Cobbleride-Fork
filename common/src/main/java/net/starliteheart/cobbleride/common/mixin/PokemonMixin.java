@@ -19,7 +19,7 @@ public abstract class PokemonMixin {
             method = "sendOut",
             at = @At(value = "NEW", target = "com/cobblemon/mod/common/entity/pokemon/PokemonEntity", remap = false)
     )
-    public PokemonEntity returnRideablePokemonEntity(Level world, Pokemon pokemon, EntityType<PokemonEntity> type, int i, DefaultConstructorMarker defaultConstructorMarker) {
+    private PokemonEntity returnRideablePokemonEntity(Level world, Pokemon pokemon, EntityType<PokemonEntity> type, int i, DefaultConstructorMarker defaultConstructorMarker) {
         return new RideablePokemonEntity(world, pokemon);
     }
 }

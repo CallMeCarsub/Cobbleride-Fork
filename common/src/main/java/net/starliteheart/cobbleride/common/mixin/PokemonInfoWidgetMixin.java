@@ -29,7 +29,7 @@ public abstract class PokemonInfoWidgetMixin {
             ordinal = 6, shift = At.Shift.AFTER
     )
     )
-    public void displayRideDexIcon(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void displayRideDexIcon(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         PoseStack matrices = context.pose();
         PokemonInfoWidget pokeInfo = (PokemonInfoWidget) (Object) this;
         final float SCALE = PokedexGUIConstants.SCALE;

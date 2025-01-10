@@ -19,7 +19,7 @@ public abstract class LivingEntityMixin {
                     target = "Lnet/minecraft/world/entity/LivingEntity;moveRelative(FLnet/minecraft/world/phys/Vec3;)V"
             )
     )
-    public void modifyFluidSpeed(LivingEntity instance, float v, Vec3 vec3) {
+    private void modifyFluidSpeed(LivingEntity instance, float v, Vec3 vec3) {
         if (instance instanceof RideablePokemonEntity) {
             // Since fluid movement is likely balanced around players, base player movement speed is used as a basis
             float speedRatio = instance.getSpeed() / 0.1F;

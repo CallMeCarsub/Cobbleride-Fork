@@ -2,7 +2,11 @@ package net.starliteheart.cobbleride.common.mixin;
 
 import com.cobblemon.mod.common.client.keybind.CobblemonKeyBinds;
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.CommonListenerCookie;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.Entity;
@@ -12,7 +16,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(value = ClientPacketListener.class)
-public abstract class ClientPacketListenerMixin {
+public abstract class ClientPacketListenerMixin extends ClientCommonPacketListenerImpl {
+    protected ClientPacketListenerMixin(Minecraft minecraft, Connection connection, CommonListenerCookie commonListenerCookie) {
+        super(minecraft, connection, commonListenerCookie);
+    }
+
     /**
      * This redirect is required to change the translated key passed to the player. Ride Pokemon use a different keybind, so we have to make sure that they are receiving the correct input!
      */
@@ -22,9 +30,9 @@ public abstract class ClientPacketListenerMixin {
             target = "Lnet/minecraft/network/chat/Component;translatable(Ljava/lang/String;[Ljava/lang/Object;)Lnet/minecraft/network/chat/MutableComponent;"
     )
     )
-    public MutableComponent displayRideIcon(String string, Object[] objects, @Local(ordinal = 0) Entity entity) {
+    private MutableComponent displayRideIcon(String string, Object[] objects, @Local(ordinal = 0) Entity entity) {
         return Component.translatable(string, (entity instanceof RideablePokemonEntity)
-                ? new Object[]{CobblemonKeyBinds.INSTANCE.getSEND_OUT_POKEMON().getTranslatedKeyMessage()}
+                ? new Object[]{this.minecraft.options.keyShift.getTranslatedKeyMessage().getString() + " + " + CobblemonKeyBinds.INSTANCE.getSEND_OUT_POKEMON().getTranslatedKeyMessage().getString()}
                 : objects);
     }
 }

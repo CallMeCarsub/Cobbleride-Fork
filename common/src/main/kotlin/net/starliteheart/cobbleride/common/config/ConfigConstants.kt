@@ -5,20 +5,20 @@ object ConfigConstants {
         const val DEFAULT: Double = 1.0
         const val UNDERWATER: Double = 1.0
         const val MIN: Double = 0.0
-        const val MAX: Double = 5.0
+        const val MAX: Double = 100.0
     }
 
     object Height {
         const val SWIM: Double = 2.0
         const val FLY: Double = 0.5
         const val MIN: Double = 0.0
-        const val MAX: Double = 5.0
+        const val MAX: Double = 100.0
     }
 
     object SpeedLimit {
         const val VALUE: Double = 0.0
         const val MIN: Double = 0.0
-        const val MAX: Double = 120.0
+        const val MAX: Double = 420.0
     }
 
     object Feature {
@@ -41,7 +41,7 @@ object ConfigConstants {
             const val MIN_SPEED: Double = 0.5
             const val MAX_SPEED: Double = 4.0
             const val MIN: Double = 0.0
-            const val MAX: Double = 5.0
+            const val MAX: Double = 100.0
         }
     }
 
@@ -54,7 +54,7 @@ object ConfigConstants {
         object Speed {
             const val VALUE: Double = 1.5
             const val MIN: Double = 1.0
-            const val MAX: Double = 5.0
+            const val MAX: Double = 100.0
         }
 
         object Exhaust {

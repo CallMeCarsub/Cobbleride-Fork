@@ -92,7 +92,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
     var isRideSprinting: Boolean = false
 
     private fun canBeRiddenBy(player: Player): Boolean =
-        rideData != null && rideData!!.enabled && (canBeControlledBy(player) || !this.isBattling)
+        rideData != null && rideData!!.enabled && (canBeControlledBy(player) || !this.isBattling) && !this.isEvolving
                 && this.owner !is NPCEntity && isAllowedDimension()
 
     private fun isAllowedDimension() = !config.restrictions.blacklistedDimensions.contains(
@@ -232,7 +232,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
     }
 
     private fun canBeControlledBy(entity: LivingEntity): Boolean =
-        entity is Player && entity.uuid == this.ownerUUID
+        entity is Player && this.isOwnedBy(entity)
 
     override fun causeFallDamage(fallDistance: Float, damageMultiplier: Float, damageSource: DamageSource): Boolean {
         val flag = super.causeFallDamage(fallDistance, damageMultiplier, damageSource)
