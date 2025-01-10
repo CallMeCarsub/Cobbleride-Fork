@@ -36,9 +36,9 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.phys.Vec2
 import net.minecraft.world.phys.Vec3
-import net.starliteheart.cobbleride.common.CobbleRideMod
 import net.starliteheart.cobbleride.common.api.pokemon.RideablePokemonSpecies
-import net.starliteheart.cobbleride.common.config.CobbleRideConfig
+import net.starliteheart.cobbleride.common.client.settings.ClientSettings
+import net.starliteheart.cobbleride.common.client.settings.ServerSettings
 import net.starliteheart.cobbleride.common.mixin.accessor.LivingEntityAccessor
 import net.starliteheart.cobbleride.common.net.messages.client.pokemon.ai.ClientMoveBehaviour
 import net.starliteheart.cobbleride.common.net.messages.client.spawn.SpawnRidePokemonPacket
@@ -66,8 +66,8 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
     // Used clientside to ensure that we can still access move behaviour for resolving ride logic
     var moveBehaviour: ClientMoveBehaviour = ClientMoveBehaviour(exposedForm.behaviour.moving)
 
-    private val config: CobbleRideConfig
-        get() = CobbleRideMod.config
+    private val config: ServerSettings
+        get() = ServerSettings
 
     private var lastRiderPosition: Vec3? = null
     private var shouldSinkInWater = false
@@ -95,7 +95,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         rideData != null && rideData!!.enabled && (canBeControlledBy(player) || !this.isBattling)
                 && this.owner !is NPCEntity && isAllowedDimension()
 
-    private fun isAllowedDimension() = !config.permissions.blacklistedDimensions.contains(
+    private fun isAllowedDimension() = !config.restrictions.blacklistedDimensions.contains(
         level().dimension().location().toString()
     )
 
@@ -411,7 +411,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         var vec3 = Vec3(xxa.toDouble(), 0.0, zza.toDouble())
 
         // We rotate the vector here to align with the player's line of view if camera navigation is enabled.
-        if (config.general.useCameraNavigation && vec3.length() > 0) {
+        if (ClientSettings.useCameraNavigation && vec3.length() > 0) {
             if ((isInWater && isAbleToDive() && (getIsSubmerged() || isRideDescending)) || isInLava || isFlying()) {
                 vec3 = vec3.xRot((-player.xRot.toRadians()))
             }

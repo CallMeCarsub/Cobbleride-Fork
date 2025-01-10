@@ -8,8 +8,11 @@ class CobbleRideConfig {
     @SerializedName("general")
     var general: General = General()
 
-    @SerializedName("permissions")
-    var permissions: Permissions = Permissions()
+    @SerializedName("client")
+    var client: Client = Client()
+
+    @SerializedName("restrictions")
+    var restrictions: Restrictions = Restrictions()
 
     @SerializedName("speedStat")
     var speedStat: SpeedStat = SpeedStat()
@@ -44,7 +47,9 @@ class CobbleRideConfig {
 
         @SerializedName("isWaterBreathingShared")
         var isWaterBreathingShared: Boolean = ConfigConstants.Feature.IS_WATER_BREATHING_SHARED
+    }
 
+    inner class Client {
         @SerializedName("canDismountInMidair")
         var canDismountInMidair: Boolean = ConfigConstants.Feature.CAN_DISMOUNT_IN_MIDAIR
 
@@ -52,7 +57,7 @@ class CobbleRideConfig {
         var useCameraNavigation: Boolean = ConfigConstants.Feature.USE_CAMERA_NAVIGATION
     }
 
-    inner class Permissions {
+    inner class Restrictions {
         @SerializedName("blacklistedDimensions")
         var blacklistedDimensions: List<String> = listOf()
     }

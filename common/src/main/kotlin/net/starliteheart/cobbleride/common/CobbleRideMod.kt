@@ -1,5 +1,6 @@
 package net.starliteheart.cobbleride.common
 
+import com.cobblemon.mod.common.api.events.CobblemonEvents
 import com.cobblemon.mod.common.data.CobblemonDataProvider
 import com.cobblemon.mod.common.platform.events.PlatformEvents
 import com.google.gson.JsonElement
@@ -8,6 +9,7 @@ import com.google.gson.JsonParser
 import net.starliteheart.cobbleride.common.api.pokemon.RideablePokemonSpecies
 import net.starliteheart.cobbleride.common.config.CobbleRideConfig
 import net.starliteheart.cobbleride.common.entity.pokemon.RideablePokemonEntity
+import net.starliteheart.cobbleride.common.net.messages.client.settings.SendServerSettingsPacket
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.File
@@ -32,6 +34,37 @@ object CobbleRideMod {
             }
         }
         loadConfig()
+
+        CobblemonEvents.DATA_SYNCHRONIZED.subscribe {
+            SendServerSettingsPacket(
+                this.config.general.globalBaseSpeedModifier,
+                this.config.general.globalLandSpeedModifier,
+                this.config.general.globalWaterSpeedModifier,
+                this.config.general.globalAirSpeedModifier,
+                this.config.general.underwaterSpeedModifier,
+                this.config.general.waterVerticalClimbSpeed,
+                this.config.general.airVerticalClimbSpeed,
+                this.config.general.rideSpeedLimit,
+                this.config.general.isWaterBreathingShared,
+                this.config.restrictions.blacklistedDimensions,
+                this.config.speedStat.affectsSpeed,
+                this.config.speedStat.minStatThreshold,
+                this.config.speedStat.maxStatThreshold,
+                this.config.speedStat.minSpeedModifier,
+                this.config.speedStat.maxSpeedModifier,
+                this.config.sprinting.canSprint,
+                this.config.sprinting.rideSprintSpeed,
+                this.config.sprinting.canSprintOnLand,
+                this.config.sprinting.canSprintInWater,
+                this.config.sprinting.canSprintInAir,
+                this.config.sprinting.canExhaust,
+                this.config.sprinting.maxStamina,
+                this.config.sprinting.recoveryTime,
+                this.config.sprinting.recoveryDelay,
+                this.config.sprinting.exhaustionSpeed,
+                this.config.sprinting.exhaustionDuration
+            ).sendToPlayer(it)
+        }
     }
 
     /*
