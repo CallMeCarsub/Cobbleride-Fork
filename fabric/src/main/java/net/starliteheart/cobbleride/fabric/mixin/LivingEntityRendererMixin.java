@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(value = LivingEntityRenderer.class)
 public class LivingEntityRendererMixin {
-    /*
-        We need to redirect this method in order to add a Ride Pokemon check, so that we can adjust the passenger's render state if they need to be standing
+    /**
+     * We need to redirect this method in order to add a Ride Pokemon check, so that we can adjust the passenger's render state if they need to be standing
      */
     @Redirect(
             method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",

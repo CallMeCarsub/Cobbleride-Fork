@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(value = ClientPacketListener.class)
 public abstract class ClientPacketListenerMixin {
-    /*
-        This redirect is required to change the translated key passed to the player. Ride Pokemon use a different keybind, so we have to make sure that they are receiving the correct input!
+    /**
+     * This redirect is required to change the translated key passed to the player. Ride Pokemon use a different keybind, so we have to make sure that they are receiving the correct input!
      */
     @Redirect(
             method = "handleSetEntityPassengersPacket", at = @At(

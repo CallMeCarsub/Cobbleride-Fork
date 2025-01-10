@@ -19,8 +19,8 @@ import static net.starliteheart.cobbleride.common.util.CobbleRideUtilsKt.rideabl
 
 @Mixin(value = PokemonInfoWidget.class)
 public abstract class PokemonInfoWidgetMixin {
-    /*
-        This inject makes sure that Ride Pokemon have a neat little icon in the Pokedex to show that you can ride them!
+    /**
+     * This inject makes sure that Ride Pokemon have a neat little icon in the Pokedex to show that you can ride them!
      */
     @Inject(
             method = "renderWidget", at = @At(

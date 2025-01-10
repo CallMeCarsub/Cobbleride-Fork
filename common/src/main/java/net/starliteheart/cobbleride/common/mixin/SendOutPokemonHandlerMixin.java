@@ -15,8 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = SendOutPokemonHandler.class)
 public abstract class SendOutPokemonHandlerMixin {
-    /*
-        This inject is necessary to enable the Throw Selected Pokemon key to dismount your Active Pokemon if you're riding it!
+    /**
+     * This inject is necessary to enable the Throw Selected Pokemon key to dismount your Active Pokemon if you're riding it!
      */
     @Inject(
             method = "handle(Lcom/cobblemon/mod/common/net/messages/server/SendOutPokemonPacket;Lnet/minecraft/server/MinecraftServer;Lnet/minecraft/server/level/ServerPlayer;)V",
@@ -28,7 +28,13 @@ public abstract class SendOutPokemonHandlerMixin {
             cancellable = true
     )
     public void dismountIfRidingActivePokemon(SendOutPokemonPacket packet, MinecraftServer server, ServerPlayer player, CallbackInfo ci, @Local Pokemon pokemon) {
-        if (pokemon.getState() instanceof ActivePokemonState active && player.getVehicle() instanceof RideablePokemonEntity rideable && rideable == active.getEntity()) {
+        if (
+                player.getVehicle() instanceof RideablePokemonEntity mount && (
+                        !mount.isOwnedBy(player) || (
+                                pokemon.getState() instanceof ActivePokemonState active && mount.is(active.getEntity())
+                        )
+                )
+        ) {
             player.stopRiding();
             ci.cancel();
         }

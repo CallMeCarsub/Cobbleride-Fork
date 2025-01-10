@@ -67,8 +67,8 @@ object CobbleRideMod {
         }
     }
 
-    /*
-        Chasem, who made CobblemonExtras, was nice enough to let me copy and modify their config loading and saving code. Be sure to support them!
+    /**
+     * Chasem, who made CobblemonExtras, was nice enough to let me copy and modify their config loading and saving code. Be sure to support them!
      */
     private fun loadConfig() {
         val configFileLoc =

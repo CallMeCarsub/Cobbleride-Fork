@@ -16,8 +16,8 @@ import static net.starliteheart.cobbleride.common.util.CobbleRideUtilsKt.rideabl
 
 @Mixin(value = PCGUI.class)
 public abstract class PCGUIMixin {
-    /*
-        This inject makes sure that Ride Pokemon have a neat little icon in the PC screens to show that you can ride them!
+    /**
+     * This inject makes sure that Ride Pokemon have a neat little icon in the PC screens to show that you can ride them!
      */
     @Inject(
             method = "render", at = @At(

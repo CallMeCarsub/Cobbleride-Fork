@@ -102,6 +102,10 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
     override fun isImmobile(): Boolean =
         pokemon.status?.status == Statuses.SLEEP || super.isImmobile()
 
+    override fun isOwnedBy(livingEntity: LivingEntity): Boolean {
+        return this.ownerUUID == livingEntity.uuid
+    }
+
     override fun canSitOnShoulder(): Boolean =
         passengers.isEmpty() && super.canSitOnShoulder()
 

@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(value = LivingEntity.class)
 public abstract class LivingEntityMixin {
-    /*
-        Minecraft is weird in that all entities seem(?) to move at the same speed in water, because movement speed isn't really factored into the way they move in water. The below inject makes sure that a Ride Pokemon's speed in liquid will be properly applied.
+    /**
+     * Minecraft is weird in that all entities seem(?) to move at the same speed in water, because movement speed isn't really factored into the way they move in water. The below inject makes sure that a Ride Pokemon's speed in liquid will be properly applied.
      */
     @Redirect(
             method = "travel",

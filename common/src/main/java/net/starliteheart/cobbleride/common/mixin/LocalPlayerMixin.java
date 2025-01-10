@@ -20,8 +20,8 @@ public abstract class LocalPlayerMixin {
     @Shadow
     public Input input;
 
-    /*
-        This inject is necessary to pass client inputs to the Ride Pokemon. This ensures that we can operate the Pokemon on a mostly client-side level. Only isRideAscending is not set here, but we can get this from the player's jumping state.
+    /**
+     * This inject is necessary to pass client inputs to the Ride Pokemon. This ensures that we can operate the Pokemon on a mostly client-side level. Only isRideAscending is not set here, but we can get this from the player's jumping state.
      */
     @Inject(
             method = "aiStep",

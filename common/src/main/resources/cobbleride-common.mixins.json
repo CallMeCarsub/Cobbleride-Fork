@@ -15,6 +15,7 @@
   "mixins": [
     "CobblemonNetworkMixin",
     "LivingEntityMixin",
+    "PlayerExtensionsMixin",
     "PlayerMixin",
     "PokemonBattleMixin",
     "PokemonMixin",

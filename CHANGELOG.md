@@ -18,8 +18,15 @@
 - Reduced the number of packets sent between client and server! Which SHOULD mean servers have less data to juggle,
   which should keep TPS healthy. Haven't had any evidence to suggest that this could be a potential issue, but it never
   hurts to take some preventative measures!
+- The above change did introduce a conflict, though, since the Throw Selected Pokemon key is also used for battles and
+  interactions. The resulting side effects included being unable to dismount from your Ride Pokemon while involved in a
+  battle. This has been fixed by prioritizing self-dismounting from any actively selected Ride Pokemon. You also
+  prioritize dismounting from someone else's Pokemon. This should hopefully improve user-friendliness for the controls
+  while still allowing you opportunities to ride your Pokemon into battle! (Just make sure it isn't your actively
+  selected Pokemon when you start, it will work.)
 - Adjusted Ride Pokemon interaction to now let you mount even while holding an item! This only applies to items that do
-  not have some special effect on the Pokemon when used, such as shears on a Wooloo or evolution items.
+  not have some special effect on the Pokemon when used, such as potions or evolution items.
+- Fixed an issue where server configs were not being correctly synced to connecting clients.
 - Added new movement-type option for diving and flying, where you will move in the direction your camera is facing in,
   not unlike creative flight. Ascending and descending via key presses will still work, but this mode allows for
   vertical movement without needing to use them beyond initializing flying or diving.

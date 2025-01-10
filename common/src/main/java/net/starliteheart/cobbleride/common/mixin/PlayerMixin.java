@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = Player.class)
 public abstract class PlayerMixin {
-    /*
-        This inject makes sure that sneaking won't dismount you when you're riding a Ride Pokemon.
+    /**
+     * This inject makes sure that sneaking won't dismount you when you're riding a Ride Pokemon.
      */
     @Inject(
             method = "wantsToStopRiding",
@@ -19,6 +19,6 @@ public abstract class PlayerMixin {
     )
     public void doNotDismountRidePokemon(CallbackInfoReturnable<Boolean> cir) {
         Player player = (Player) (Object) this;
-        cir.setReturnValue(!(player.getVehicle() instanceof RideablePokemonEntity pokemon && pokemon.isOwnedBy(player)) && cir.getReturnValue());
+        cir.setReturnValue(!(player.getVehicle() instanceof RideablePokemonEntity) && cir.getReturnValue());
     }
 }

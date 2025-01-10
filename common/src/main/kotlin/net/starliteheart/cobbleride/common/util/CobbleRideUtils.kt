@@ -1,11 +1,17 @@
 package net.starliteheart.cobbleride.common.util
 
+import com.cobblemon.mod.common.util.EntityTraceResult
 import com.cobblemon.mod.common.util.math.geometry.toDegrees
 import com.cobblemon.mod.common.util.math.geometry.toRadians
+import com.cobblemon.mod.common.util.traceEntityCollision
 import net.minecraft.core.particles.SimpleParticleType
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.level.ClipContext
+import net.minecraft.world.phys.AABB
+import net.minecraft.world.phys.HitResult
 import net.minecraft.world.phys.Vec3
 import net.starliteheart.cobbleride.common.CobbleRideMod
 import kotlin.math.atan2
@@ -51,4 +57,69 @@ fun emitParticle(entity: Entity, particle: SimpleParticleType) {
             1.0   //Scale?
         )
     }
+}
+
+fun <T : Entity> Player.resolveTraceEntityCollision(
+    maxDistance: Float = 10F,
+    stepDistance: Float = 0.05F,
+    entityClass: Class<T>,
+    ignoreEntity: T? = null,
+    collideBlock: ClipContext.Fluid?
+): EntityTraceResult<T>? {
+    val newStep = if (stepDistance > 0) stepDistance else 0.05f
+    return if (this.vehicle != null) {
+        val list = listOf(ignoreEntity, this.vehicle)
+        traceEntityCollisionWithIgnoreList(maxDistance, newStep, entityClass, list, collideBlock)
+    } else {
+        traceEntityCollision(maxDistance, newStep, entityClass, ignoreEntity, collideBlock)
+    }
+}
+
+/*
+    Copied from Cobblemon's PlayerExtensions, modified to allow for multiple ignored entities
+ */
+fun <T : Entity> Player.traceEntityCollisionWithIgnoreList(
+    maxDistance: Float = 10F,
+    stepDistance: Float = 0.05F,
+    entityClass: Class<T>,
+    ignoreEntities: List<Entity?> = listOf(),
+    collideBlock: ClipContext.Fluid?
+): EntityTraceResult<T>? {
+    var step = stepDistance
+    val startPos = eyePosition
+    val direction = lookAngle
+    val maxDistanceVector = Vec3(1.0, 1.0, 1.0).scale(maxDistance.toDouble())
+
+    val entities = level().getEntities(
+        null,
+        AABB(startPos.subtract(maxDistanceVector), startPos.add(maxDistanceVector))
+    ) { entityClass.isInstance(it) }
+
+    while (step <= maxDistance) {
+        val location = startPos.add(direction.scale(step.toDouble()))
+        step += stepDistance
+
+        val collided = entities.filter {
+            !ignoreEntities.contains(it) && location in it.boundingBox && entityClass.isInstance(it) && !it.isSpectator
+        }
+
+        if (collided.isNotEmpty()) {
+            if (collideBlock != null && level().clip(
+                    ClipContext(
+                        startPos,
+                        location,
+                        ClipContext.Block.COLLIDER,
+                        collideBlock,
+                        this
+                    )
+                ).type == HitResult.Type.BLOCK
+            ) {
+                // Collided with block on the way to the entity
+                return null
+            }
+            return EntityTraceResult(location, collided.filterIsInstance(entityClass))
+        }
+    }
+
+    return null
 }

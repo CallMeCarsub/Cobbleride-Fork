@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(value = PokemonServerDelegate.class)
 public abstract class PokemonServerDelegateMixin<T> {
-    /*
-        Animations for Ride Pokemon don't work unless we make sure their MOVING state is being updated correctly.
+    /**
+     * Animations for Ride Pokemon don't work unless we make sure their MOVING state is being updated correctly.
      */
     @SuppressWarnings("unchecked")
     @Redirect(
