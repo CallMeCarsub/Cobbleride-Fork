@@ -125,6 +125,9 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
     private fun isAbleToDive(): Boolean =
         moveBehaviour.swim.canSwimInWater && moveBehaviour.swim.canBreatheUnderwater
 
+    private fun isAbleToFly(): Boolean =
+        moveBehaviour.fly.canFly
+
     private fun isInPoseOfType(poseType: PoseType): Boolean =
         this.getCurrentPoseType() == poseType
 
@@ -341,9 +344,13 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
             this.setBehaviourFlag(PokemonBehaviourFlag.FLYING, false)
         }
 
-        // Set flying state if we should be flying
-        if (isRideAscending && moveBehaviour.fly.canFly && !this.isFlying() && !getIsSubmerged()) {
-            this.setBehaviourFlag(PokemonBehaviourFlag.FLYING, true)
+        // Set flying state if we should be flying, or jump if on land
+        if (isRideAscending) {
+            if (isAbleToFly() && !this.isFlying() && !getIsSubmerged()) {
+                this.setBehaviourFlag(PokemonBehaviourFlag.FLYING, true)
+            } else if (!isAbleToFly() && (this.onGround() || (isInLiquid && !isUnderWater))) {
+                this.jumpControl.jump()
+            }
         }
 
         // Activate any jumps that have been queued up this tick

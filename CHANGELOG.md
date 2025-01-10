@@ -10,14 +10,14 @@
   This means there are no longer any separate keybinds for the mod itself, but this should allow for better
   out-of-the-box functionality without a reliance on any mods to resolve keybind conflicts! The updated controls are as
   follows:
-    - Jump to ascend / fly (default Space)
-    - Sneak to descend / dive (default LShift)
-    - Sprint to... sprint! But with STYLE! (default LCtrl)
-    - Sneak and Throw (from Cobblemon) to dismount (default LShift + R) if your Ride Pokemon is selected. Kinda like
-      when you want to get a shoulder-mounted Pokemon off your shoulder, only YOU'RE the one on THEIR shoulder! Except
-      you also have to sneak, because it makes more sense to require dismounting to be a more explicitly desired action
-      to preserve normal functions on the button otherwise. Note that you also cannot recall your Pokemon unless you are
-      dismounted from it.
+    - "Jump" to ascend, fly... and jump! (default Space)
+    - "Sneak" to descend and dive (default LShift)
+    - "Sprint" to... sprint! But with STYLE! (default LCtrl)
+    - "Throw Selected Pokemon" while sneaking to dismount (default LShift + R) if your Ride Pokemon is selected. Kinda
+      like when you want to get a shoulder-mounted Pokemon off your shoulder, only YOU'RE the one on THEIR shoulder!
+      Except that you also have to be sneaking. This is mainly to ensure that dismounting is a very deliberate action,
+      while also freeing up the "Throw Selected Pokemon" key for other actions such as starting battles or interacting
+      with other players while mounted. Note that you also cannot recall your Pokemon unless you are dismounted from it.
 - Reduced the number of packets sent between client and server as a result of the changes above. Which SHOULD mean
   servers have less data to juggle, which should keep TPS healthy. Haven't had any evidence to suggest that this could
   be a potential issue, but it never hurts to take some preventative measures!
@@ -37,6 +37,7 @@
 - Reduced default underwater modifier from 2.0 to 1.0. Underwater Pokemon were a bit TOO fast.
 - Increased maximum limit for all speed-related modifiers from 5.0 to 100.0. Because some folks WANT to go too fast.
 - Increased maximum limit for ride speed limit from 120.0 to 420.0. Because you'll be blazing at those speeds.
+- Fixed Torterra's offset. Added Rhyhorn. More planned, just wanted to square these two away since they were on my mind.
 - Minor adjustments throughout the code, to make things either more readable or a touch more standardized.
 
 ***
