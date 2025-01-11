@@ -38,6 +38,8 @@
 - Increased maximum limit for all speed-related modifiers from 5.0 to 100.0. Because some folks WANT to go too fast.
 - Increased maximum limit for ride speed limit from 120.0 to 420.0. Because you'll be blazing at those speeds.
 - Fixed Torterra's offset. Added Rhyhorn. More planned, just wanted to square these two away since they were on my mind.
+- Added compatibility with Pet Your Cobblemon. Right-clicking to mount will work normally while the mod's interaction
+  mode is disabled, and will be disabled while interaction mode is enabled.
 - Minor adjustments throughout the code, to make things either more readable or a touch more standardized.
 
 ***

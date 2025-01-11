@@ -1,6 +1,7 @@
 package net.starliteheart.cobbleride.common.entity.pokemon
 
 import com.bedrockk.molang.runtime.MoLangRuntime
+import com.cobblemon.mod.common.Cobblemon
 import com.cobblemon.mod.common.api.pokemon.status.Statuses
 import com.cobblemon.mod.common.api.tags.CobblemonItemTags
 import com.cobblemon.mod.common.entity.PlatformType
@@ -39,6 +40,7 @@ import net.minecraft.world.phys.Vec3
 import net.starliteheart.cobbleride.common.api.pokemon.RideablePokemonSpecies
 import net.starliteheart.cobbleride.common.client.settings.ClientSettings
 import net.starliteheart.cobbleride.common.client.settings.ServerSettings
+import net.starliteheart.cobbleride.common.compat.PetYourCobblemonCompat
 import net.starliteheart.cobbleride.common.mixin.accessor.LivingEntityAccessor
 import net.starliteheart.cobbleride.common.net.messages.client.pokemon.ai.ClientMoveBehaviour
 import net.starliteheart.cobbleride.common.net.messages.client.spawn.SpawnRidePokemonPacket
@@ -262,8 +264,11 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         val result = super.mobInteract(player, hand)
         if (result == InteractionResult.PASS) {
             val itemStack = player.getItemInHand(hand)
-            if (!player.isShiftKeyDown
-                && hand == InteractionHand.MAIN_HAND && !itemStack.`is`(CobblemonItemTags.POKEDEX)
+            if (!player.isShiftKeyDown && hand == InteractionHand.MAIN_HAND
+                && !itemStack.`is`(CobblemonItemTags.POKEDEX)
+                && !(Cobblemon.implementation.isModInstalled("petyourcobblemon") && PetYourCobblemonCompat.isInteractionModeEnabled(
+                    player
+                ))
             ) {
                 if (!this.isVehicle && this.canBeRiddenBy(player)) {
                     this.doPlayerRide(player)
