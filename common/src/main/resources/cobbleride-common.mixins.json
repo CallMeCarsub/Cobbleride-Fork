@@ -20,8 +20,10 @@
     "PokemonBattleMixin",
     "PokemonMixin",
     "PokemonServerDelegateMixin",
+    "RequestInteractionsHandlerMixin",
     "SendOutPokemonHandlerMixin",
     "ServerEvolutionControllerMixin",
+    "SpectateBattleHandlerMixin",
     "SwitchInstructionMixin",
     "accessor.LivingEntityAccessor"
   ],

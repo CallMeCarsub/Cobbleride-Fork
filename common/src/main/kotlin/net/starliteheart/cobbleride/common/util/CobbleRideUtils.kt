@@ -1,9 +1,11 @@
 package net.starliteheart.cobbleride.common.util
 
+import com.cobblemon.mod.common.entity.npc.NPCEntity
 import com.cobblemon.mod.common.util.EntityTraceResult
 import com.cobblemon.mod.common.util.math.geometry.toDegrees
 import com.cobblemon.mod.common.util.math.geometry.toRadians
 import com.cobblemon.mod.common.util.traceEntityCollision
+import com.cobblemon.mod.common.util.traceFirstEntityCollision
 import net.minecraft.core.particles.SimpleParticleType
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
@@ -59,6 +61,27 @@ fun emitParticle(entity: Entity, particle: SimpleParticleType) {
     }
 }
 
+fun <T : Entity> Player.traceEntityCollisionAndReturnRider(
+    maxDistance: Float = 10F,
+    stepDistance: Float = 0.05F,
+    entityClass: Class<T>,
+    ignoreEntity: T? = null,
+    collideBlock: ClipContext.Fluid?
+): T? {
+    val entity = this.traceFirstEntityCollision(maxDistance, stepDistance, entityClass, ignoreEntity, collideBlock)
+    if (entity != null && entity.isVehicle && entity !is Player && entity !is NPCEntity) {
+        val list =
+            if (this.vehicle != null) listOf(ignoreEntity, this.vehicle, entity) else listOf(ignoreEntity, entity)
+        val nextClosest = traceEntityCollisionWithIgnoreList(
+            maxDistance, stepDistance, entityClass, list, collideBlock
+        )?.let { result -> result.entities.minByOrNull { it.distanceTo(this) } }
+        if (nextClosest != null && entity.hasPassenger(nextClosest)) {
+            return nextClosest
+        }
+    }
+    return entity
+}
+
 fun <T : Entity> Player.resolveTraceEntityCollision(
     maxDistance: Float = 10F,
     stepDistance: Float = 0.05F,
@@ -66,12 +89,11 @@ fun <T : Entity> Player.resolveTraceEntityCollision(
     ignoreEntity: T? = null,
     collideBlock: ClipContext.Fluid?
 ): EntityTraceResult<T>? {
-    val newStep = if (stepDistance > 0) stepDistance else 0.05f
     return if (this.vehicle != null) {
         val list = listOf(ignoreEntity, this.vehicle)
-        traceEntityCollisionWithIgnoreList(maxDistance, newStep, entityClass, list, collideBlock)
+        traceEntityCollisionWithIgnoreList(maxDistance, stepDistance, entityClass, list, collideBlock)
     } else {
-        traceEntityCollision(maxDistance, newStep, entityClass, ignoreEntity, collideBlock)
+        traceEntityCollision(maxDistance, stepDistance, entityClass, ignoreEntity, collideBlock)
     }
 }
 

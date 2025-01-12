@@ -21,6 +21,9 @@
 - Reduced the number of packets sent between client and server as a result of the changes above. Which SHOULD mean
   servers have less data to juggle, which should keep TPS healthy. Haven't had any evidence to suggest that this could
   be a potential issue, but it never hurts to take some preventative measures!
+- Adjusted raytracing for Cobblemon such that it will ignore mounts when drawing a line between you and a target for
+  certain interactions. This works for vanilla mounts as well! So now even the largest of Pokemon will not block your
+  ability to start a battle!
 - Adjusted Ride Pokemon interaction to now let you mount even while holding an item! This only applies to items that do
   not have some special effect on the Pokemon when used, such as potions or evolution items.
 - Fixed an issue where server configs were not being correctly synced to connecting clients.
@@ -31,7 +34,9 @@
   dimensions, just add their resource locations (e.g. "minecraft:the_nether") to the list to prevent riding in those
   dimensions!
 - Added safety check to make sure you can't mount a Ride Pokemon that belongs to an NPC entity.
-- Added checks to make sure that Ride Pokemon are not dismounted if swapped out in battle (unless they faint).
+- Added checks to make sure that Ride Pokemon are not dismounted if swapped out in battle (unless they faint). Ride
+  Pokemon will still be recalled, however, at the start and end of any level adjusted trainer battle. This is for safety
+  reasons, so I have no plans of changing this.
 - Added checks to make sure that Ride Pokemon cannot be evolved while mounted, nor can players mount Pokemon while they
   are evolving.
 - Reduced default underwater modifier from 2.0 to 1.0. Underwater Pokemon were a bit TOO fast.
