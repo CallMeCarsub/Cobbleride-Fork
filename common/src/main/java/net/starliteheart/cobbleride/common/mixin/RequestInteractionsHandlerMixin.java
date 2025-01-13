@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(value = RequestInteractionsHandler.class)
-public class RequestInteractionsHandlerMixin {
+public abstract class RequestInteractionsHandlerMixin {
     /**
      * We need to check here to make sure that there isn't an entity hidden inside a mount's hitbox while riding it, and we return the entity instead if it is there.
      */

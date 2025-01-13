@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(value = PlayerExtensionsKt.class)
-public class PlayerExtensionsMixin {
+public abstract class PlayerExtensionsMixin {
     /**
      * This inject ensures that any mounted entity will not interfere with the player's ability to interact with an entity in front of them.
      */

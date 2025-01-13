@@ -35,9 +35,6 @@ public abstract class SendOutPokemonHandlerMixin {
                         )
                 )
         ) {
-            if (player.isShiftKeyDown()) {
-                player.stopRiding();
-            }
             ci.cancel();
         }
     }

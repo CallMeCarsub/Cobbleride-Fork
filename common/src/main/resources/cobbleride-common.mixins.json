@@ -10,6 +10,7 @@
     "PCGUIMixin",
     "PokemonInfoWidgetMixin",
     "SummaryMixin",
+    "accessor.KeyMappingAccessor",
     "accessor.SpawnExtraDataEntityPacketAccessor"
   ],
   "mixins": [

@@ -330,7 +330,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
             // Sprint control logic
             val shouldBeSprinting = canSprint && (isInWater || isFlying() || config.sprinting.canSprintOnLand)
                     && (!isInWater || config.sprinting.canSprintInWater) && (!isFlying() || config.sprinting.canSprintInAir)
-                    && isRideSprinting && vec3.horizontalDistance() > 0 && !isExhausted && sprintStaminaScale > 0F
+                    && isRideSprinting && vec3.horizontalDistance() > 0 && (!canExhaust || (!isExhausted && sprintStaminaScale > 0F))
             if (shouldBeSprinting) {
                 sprintCooldownScale = 0F
                 if (canExhaust) {

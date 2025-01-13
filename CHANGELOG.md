@@ -2,7 +2,16 @@
 
 ***
 
-### v0.2.0 (Release TBD)
+### v0.2.1 (Released January 13, 2025)
+
+- Adjusted dismounting such that it should be more responsive. So long as one key isn't released before the other is
+  registered as pressed down, dismounting should work as intended.
+- Fixed issue where setting canExhaust to false was disabling sprinting altogether.
+- Fixed issue where battles would not end correctly.
+
+***
+
+### v0.2.0 (Released January 13, 2025)
 
 #### Updated controls system!
 

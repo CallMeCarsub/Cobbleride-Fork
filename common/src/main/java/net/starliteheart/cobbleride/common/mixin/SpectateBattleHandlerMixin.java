@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(value = SpectateBattleHandler.class)
-public class SpectateBattleHandlerMixin {
+public abstract class SpectateBattleHandlerMixin {
     /**
      * We need to check here to make sure that there isn't an entity hidden inside a mount's hitbox while riding it, and we return the entity instead if it is there.
      */

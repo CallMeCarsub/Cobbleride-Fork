@@ -30,9 +30,12 @@ public abstract class ClientPacketListenerMixin extends ClientCommonPacketListen
             target = "Lnet/minecraft/network/chat/Component;translatable(Ljava/lang/String;[Ljava/lang/Object;)Lnet/minecraft/network/chat/MutableComponent;"
     )
     )
-    private MutableComponent displayRideIcon(String string, Object[] objects, @Local(ordinal = 0) Entity entity) {
-        return Component.translatable(string, (entity instanceof RideablePokemonEntity)
-                ? new Object[]{this.minecraft.options.keyShift.getTranslatedKeyMessage().getString() + " + " + CobblemonKeyBinds.INSTANCE.getSEND_OUT_POKEMON().getTranslatedKeyMessage().getString()}
-                : objects);
+    private MutableComponent showDismountMessage(String string, Object[] objects, @Local(ordinal = 0) Entity entity) {
+        return (entity instanceof RideablePokemonEntity) ? Component.translatable(
+                "cobbleride.mount.onboard",
+                this.minecraft.options.keyShift.getTranslatedKeyMessage(),
+                CobblemonKeyBinds.INSTANCE.getSEND_OUT_POKEMON().getTranslatedKeyMessage(),
+                entity.getDisplayName()
+        ) : Component.translatable(string, objects);
     }
 }
