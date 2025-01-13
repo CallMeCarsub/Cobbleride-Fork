@@ -49,7 +49,7 @@ object ConfigConstants {
         const val ACTIVE: Boolean = true
         const val ON_LAND: Boolean = true
         const val IN_WATER: Boolean = true
-        const val IN_AIR: Boolean = false
+        const val IN_AIR: Boolean = true
 
         object Speed {
             const val VALUE: Double = 1.5
