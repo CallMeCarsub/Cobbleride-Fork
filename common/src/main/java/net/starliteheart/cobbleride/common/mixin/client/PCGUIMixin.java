@@ -1,4 +1,4 @@
-package net.starliteheart.cobbleride.common.mixin;
+package net.starliteheart.cobbleride.common.mixin.client;
 
 import com.cobblemon.mod.common.client.gui.pc.PCGUI;
 import com.cobblemon.mod.common.pokemon.Pokemon;

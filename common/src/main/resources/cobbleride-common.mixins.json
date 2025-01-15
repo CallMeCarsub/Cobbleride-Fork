@@ -4,14 +4,15 @@
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "client": [
-    "ClientPacketListenerMixin",
-    "LocalPlayerMixin",
-    "PartySendBindingMixin",
-    "PCGUIMixin",
-    "PokemonInfoWidgetMixin",
-    "SummaryMixin",
     "accessor.KeyMappingAccessor",
-    "accessor.SpawnExtraDataEntityPacketAccessor"
+    "accessor.SpawnExtraDataEntityPacketAccessor",
+    "client.ClientPacketListenerMixin",
+    "client.GuiMixin",
+    "client.LocalPlayerMixin",
+    "client.PartySendBindingMixin",
+    "client.PCGUIMixin",
+    "client.PokemonInfoWidgetMixin",
+    "client.SummaryMixin"
   ],
   "mixins": [
     "CobblemonNetworkMixin",

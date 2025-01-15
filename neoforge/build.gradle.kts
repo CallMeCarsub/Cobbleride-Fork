@@ -18,6 +18,7 @@ repositories {
     maven("https://hub.spigotmc.org/nexus/content/groups/public/")
     maven("https://thedarkcolour.github.io/KotlinForForge/")
     maven("https://maven.neoforged.net")
+    mavenLocal()
 }
 
 dependencies {
@@ -40,6 +41,8 @@ dependencies {
     implementation("thedarkcolour:kotlinforforge-neoforge:${rootProject.property("kotlinforforge_version")}") {
         exclude("net.neoforged.fancymodloader", "loader")
     }
+
+    modCompileOnly("local.com.swordend:pet-your-cobblemon:1.3.3")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")

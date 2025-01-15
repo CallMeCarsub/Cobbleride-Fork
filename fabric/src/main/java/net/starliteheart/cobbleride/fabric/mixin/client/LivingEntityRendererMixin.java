@@ -1,4 +1,4 @@
-package net.starliteheart.cobbleride.fabric.mixin;
+package net.starliteheart.cobbleride.fabric.mixin.client;
 
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.world.entity.LivingEntity;

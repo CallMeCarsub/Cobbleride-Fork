@@ -1,4 +1,4 @@
-package net.starliteheart.cobbleride.common.mixin;
+package net.starliteheart.cobbleride.common.mixin.client;
 
 import com.cobblemon.mod.common.api.pokedex.entry.PokedexEntry;
 import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;

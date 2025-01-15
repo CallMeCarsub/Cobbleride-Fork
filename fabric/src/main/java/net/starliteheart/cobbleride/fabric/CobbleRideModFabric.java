@@ -6,6 +6,6 @@ import net.starliteheart.cobbleride.common.CobbleRideMod;
 public class CobbleRideModFabric implements ModInitializer {
     @Override
     public void onInitialize() {
-        CobbleRideMod.INSTANCE.initialize();
+        CobbleRideMod.INSTANCE.initialize(new CobbleRideModFabricImpl());
     }
 }

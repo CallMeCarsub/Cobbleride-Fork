@@ -1,9 +1,6 @@
 package net.starliteheart.cobbleride.common.entity.pokemon
 
-import com.bedrockk.molang.runtime.MoLangRuntime
-import com.cobblemon.mod.common.Cobblemon
 import com.cobblemon.mod.common.api.pokemon.status.Statuses
-import com.cobblemon.mod.common.api.tags.CobblemonItemTags
 import com.cobblemon.mod.common.entity.PlatformType
 import com.cobblemon.mod.common.entity.PoseType
 import com.cobblemon.mod.common.entity.npc.NPCEntity
@@ -13,7 +10,6 @@ import com.cobblemon.mod.common.pokemon.Pokemon
 import com.cobblemon.mod.common.util.DataKeys
 import com.cobblemon.mod.common.util.getIsSubmerged
 import com.cobblemon.mod.common.util.math.geometry.toRadians
-import com.cobblemon.mod.common.util.resolveFloat
 import com.google.common.collect.UnmodifiableIterator
 import net.minecraft.core.BlockPos.MutableBlockPos
 import net.minecraft.core.Direction
@@ -37,10 +33,10 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.phys.Vec2
 import net.minecraft.world.phys.Vec3
+import net.starliteheart.cobbleride.common.CobbleRideMod
 import net.starliteheart.cobbleride.common.api.pokemon.RideablePokemonSpecies
 import net.starliteheart.cobbleride.common.client.settings.ClientSettings
 import net.starliteheart.cobbleride.common.client.settings.ServerSettings
-import net.starliteheart.cobbleride.common.compat.PetYourCobblemonCompat
 import net.starliteheart.cobbleride.common.mixin.accessor.LivingEntityAccessor
 import net.starliteheart.cobbleride.common.net.messages.client.pokemon.ai.ClientMoveBehaviour
 import net.starliteheart.cobbleride.common.net.messages.client.spawn.SpawnRidePokemonPacket
@@ -263,13 +259,7 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
     override fun mobInteract(player: Player, hand: InteractionHand): InteractionResult {
         val result = super.mobInteract(player, hand)
         if (result == InteractionResult.PASS) {
-            val itemStack = player.getItemInHand(hand)
-            if (!player.isShiftKeyDown && hand == InteractionHand.MAIN_HAND
-                && !itemStack.`is`(CobblemonItemTags.POKEDEX)
-                && !(Cobblemon.implementation.isModInstalled("petyourcobblemon") && PetYourCobblemonCompat.isInteractionModeEnabled(
-                    player
-                ))
-            ) {
+            if (CobbleRideMod.implementation.canInteractToMount(player, hand)) {
                 if (!this.isVehicle && this.canBeRiddenBy(player)) {
                     this.doPlayerRide(player)
                     return InteractionResult.sidedSuccess(level().isClientSide)
@@ -466,16 +456,11 @@ class RideablePokemonEntity : PokemonEntity, PlayerRideable {
         }
 
         // Get land, water, air speed modifiers based on behaviour settings and data
-        val mediumSpeed = MoLangRuntime().resolveFloat(
-            if (getCurrentPoseType() in setOf(PoseType.FLY, PoseType.HOVER)) {
-                moveBehaviour.fly.flySpeedHorizontal
-            } else if (isEyeInFluid(FluidTags.WATER) || isEyeInFluid(FluidTags.LAVA)) {
-                moveBehaviour.swim.swimSpeed
-            } else {
-                moveBehaviour.walk.walkSpeed
-            }
-        )
-        val mediumModifier = if (getCurrentPoseType() in setOf(PoseType.FLY, PoseType.HOVER)) {
+        // Except not from behaviour since that varies at times from Pokemon to Pokemon and has been causing some silly
+        //   inconsistencies, so we'll use a constant here to keep things more standardized to their actual ride data
+        //   and speed stats
+        val mediumSpeed = 0.35F
+        val mediumModifier = if (isFlying()) {
             (rideData?.airSpeedModifier ?: 1.0F) * config.general.globalAirSpeedModifier
         } else if (isInWater || isInLava) {
             // Adds a little speed to submerged Pokemon for better ride feel

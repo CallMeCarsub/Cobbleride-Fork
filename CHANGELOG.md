@@ -2,6 +2,22 @@
 
 ***
 
+### v0.2.2 (Released January 15, 2025)
+
+- Fixed issue where some flying Pokemon were inconsistently faster in air versus others. The cause was due to how ride
+  speeds were calculated using movement speed values defined per medium in the Cobblemon data files. While most Pokemon
+  use default values, some have very different values defined, some approximately twice what the base value is. This
+  often led to some Pokemon much faster than others, in spite of what individual modifiers and speed stats should have
+  allowed for. To resolve this matter and level the field a bit better, the ride speed formula has been reworked to no
+  longer account for walking speeds defined within the Cobblemon base files. As of now, the only values external to the
+  mod that the speed formula uses is the speed stat of the Pokemon and the base movement speed of the entity, which
+  allows it to remain influenced by effects such as speed potions.
+- Fixed issue where experience bar and level number were not being properly hidden while the stamina meter is being
+  rendered.
+- Fixed issue where compatibility with Pet Your Cobblemon broke after a recent update by the mod.
+
+***
+
 ### v0.2.1 (Released January 13, 2025)
 
 - Adjusted dismounting such that it should be more responsive. So long as one key isn't released before the other is

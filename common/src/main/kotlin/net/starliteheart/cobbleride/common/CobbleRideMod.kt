@@ -20,8 +20,10 @@ object CobbleRideMod {
     const val MOD_ID = "cobbleride"
     var LOGGER: Logger = LogManager.getLogger()
     lateinit var config: CobbleRideConfig
+    lateinit var implementation: CobbleRideModImpl
 
-    fun initialize() {
+    fun initialize(implementation: CobbleRideModImpl) {
+        this.implementation = implementation
         CobblemonDataProvider.register(RideablePokemonSpecies)
         PlatformEvents.CHANGE_DIMENSION.subscribe {
             if (it.player.vehicle is RideablePokemonEntity) {

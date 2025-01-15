@@ -1,4 +1,4 @@
-package net.starliteheart.cobbleride.common.mixin;
+package net.starliteheart.cobbleride.common.mixin.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;

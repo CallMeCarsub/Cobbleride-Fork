@@ -17,8 +17,6 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${rootProject.property("fabric_loader_version")}")
     modCompileOnly("local.com.bedrockk:molang:1.1.15")
 
-    modCompileOnly("local.com.swordend:pet-your-cobblemon:1.3.1")
-
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
 }

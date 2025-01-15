@@ -1,4 +1,4 @@
-package net.starliteheart.cobbleride.common.mixin;
+package net.starliteheart.cobbleride.common.mixin.client;
 
 import com.cobblemon.mod.common.client.keybind.CobblemonKeyBinds;
 import com.llamalad7.mixinextras.sugar.Local;
