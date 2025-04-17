@@ -1,9 +1,10 @@
 architectury {
-    common("neoforge", "fabric")
+    common("fabric")
 }
 
 repositories {
     mavenLocal()
+    maven(url = "${rootProject.projectDir}/deps")
 }
 
 dependencies {

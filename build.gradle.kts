@@ -8,6 +8,10 @@ plugins {
     id("com.github.johnrengelman.shadow") version ("8.1.1") apply false
 }
 
+kotlin {
+    jvmToolchain(21)
+}
+
 architectury {
     minecraft = "${rootProject.property("minecraft_version")}"
 }
@@ -32,6 +36,10 @@ subprojects {
     base {
         // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.
         archivesName = "${rootProject.property("archives_name")}-${project.name}"
+    }
+
+    kotlin {
+        jvmToolchain(21)
     }
 
     repositories {

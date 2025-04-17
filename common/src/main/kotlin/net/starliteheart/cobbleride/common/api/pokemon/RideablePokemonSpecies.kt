@@ -49,8 +49,12 @@ object RideablePokemonSpecies : JsonDataRegistry<RideableSpecies> {
     override fun reload(data: Map<ResourceLocation, RideableSpecies>) {
         speciesByIdentifier.clear()
         data.forEach { (identifier, species) ->
-            species.identifier = identifier
-            speciesByIdentifier[identifier] = species
+            try {
+                species.identifier = identifier
+                speciesByIdentifier[identifier] = species
+            }catch (e : Exception){
+                CobbleRideMod.LOGGER.error("Failed to load ride details for {}", identifier, e)
+            }
         }
 
         CobbleRideMod.LOGGER.info("Loaded {} Pokémon species with ride details", species.size)
